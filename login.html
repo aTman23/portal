@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>PsyShell - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
+
+    <!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon" />
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css" />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="account-page">
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <nav class="navbar navbar-expand-lg header-nav">
+                <div class="navbar-header">
+                    <a href="#" id="mobile_btn">
+                        <span class="bar-icon"><span></span><span></span><span></span></span>
+                    </a>
+                    <a href="index-2.html" class="navbar-brand logo">
+                        <img src="assets/img/logo.png" alt="Logo" />
+                    </a>
+                </div>
+                <ul class="nav header-navbar-rht">
+                    <li class="nav-item login-link">
+                        <a href="register.html">Register</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <!-- /Header -->
+
+        <!-- Login Content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="account-content">
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-md-6 login-left">
+                                    <img src="assets/img/login-banner.png" class="img-fluid" alt="Login Banner" />
+                                </div>
+                                <div class="col-md-6 login-right">
+                                    <div class="login-header">
+                                        <h3>Login</h3>
+                                    </div>
+
+                                    <form id="loginForm">
+                                        <div class="form-group form-focus">
+                                            <input type="email" id="email" class="form-control floating" required />
+                                            <label class="focus-label">Email</label>
+                                        </div>
+                                        <div class="form-group form-focus">
+                                            <input type="password" id="password" class="form-control floating" required />
+                                            <label class="focus-label">Password</label>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                                        <div id="loginErrorMessage" class="text-danger mt-2"></div>
+                                    </form>
+                                    <div class="text-right">
+                                        <a class="forgot-link" href="register.html">Don't have an account? Register</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Login Content -->
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-top">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 footer-widget">
+                            <div class="footer-logo">
+                                <img src="assets/img/footer-logo.png" alt="Logo" />
+                            </div>
+                            <p>Streamline Your Practice, Empower Your Well-being.</p>
+                        </div>
+                        <div class="col-md-6 footer-widget">
+                            <h2 class="footer-title">Contact Us</h2>
+                            <p><i class="fas fa-envelope"></i> contact@psyshell.help</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- /Footer -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                document.getElementById('loginErrorMessage').innerText = 'Both email and password are required.';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Login successful!');
+                    // Use location.replace to ensure no back navigation to login page
+                    window.location.replace('doctor-dashboard.html');
+                } else {
+                    document.getElementById('loginErrorMessage').innerText = result.message;
+                }
+            } catch (error) {
+                document.getElementById('loginErrorMessage').innerText = 'Server error. Please try again later.';
+            }
+        });
+    </script>
+</body>
+</html>
