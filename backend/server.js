@@ -99,6 +99,7 @@ app.get('/appointments/:doctorId', async (req, res) => {
 });
 
 // Update Appointment Status
+// Update Appointment Status
 app.put('/appointments/:appointmentId', async (req, res) => {
     const { appointmentId } = req.params;
     const { status } = req.body;
@@ -135,3 +136,6 @@ app.get('/psychologist/:name', async (req, res) => {
     }
 });
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
