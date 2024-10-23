@@ -1,5 +1,9 @@
 import express from 'express';
+<<<<<<< HEAD
 import pool from './config/db.js'; // MySQL Pool
+=======
+import pool from './config/db.js'; // Ensure this points correctly to db.js
+>>>>>>> 90eafb63372e06f4bb1feea5e2b1c736c5338344
 import cors from 'cors';
 import { body, validationResult } from 'express-validator';
 
@@ -51,13 +55,16 @@ app.post('/doctor-register', [
     const { name, mobile, email, password } = req.body;
 
     try {
-        // Log the incoming data for debugging
         console.log('Registering doctor with data:', { name, mobile, email });
 
         await pool.query('INSERT INTO doc (Name, Mobile, Email, Password) VALUES (?, ?, ?, ?)', [name, mobile, email, password]);
         return res.status(201).json({ message: 'Registration successful.' });
     } catch (error) {
+<<<<<<< HEAD
         console.error('Error during doctor registration:', error); // Log the error
+=======
+        console.error('Error during doctor registration:', error);
+>>>>>>> 90eafb63372e06f4bb1feea5e2b1c736c5338344
         return res.status(500).json({ message: 'Server error during registration.' });
     }
 });
@@ -86,7 +93,11 @@ app.post('/register', [
 });
 
 // Fetch Appointments for a Doctor
+<<<<<<< HEAD
 app.get('/appointments/:doctorId', async (req, res) => {
+=======
+app.get('/appointments/doctor/:doctorId', async (req, res) => {
+>>>>>>> 90eafb63372e06f4bb1feea5e2b1c736c5338344
     const { doctorId } = req.params;
 
     try {
@@ -95,6 +106,43 @@ app.get('/appointments/:doctorId', async (req, res) => {
     } catch (error) {
         console.error('Error fetching appointments:', error);
         return res.status(500).json({ message: 'Unable to fetch appointments at this time.' });
+<<<<<<< HEAD
+=======
+    }
+});
+
+// Fetch Appointments for a Patient
+app.get('/appointments/patient/:patientId', async (req, res) => {
+    const { patientId } = req.params;
+
+    try {
+        const [appointments] = await pool.query('SELECT * FROM appointments WHERE PatientID = ?', [patientId]);
+        return res.status(200).json({ appointments });
+    } catch (error) {
+        console.error('Error fetching patient appointments:', error);
+        return res.status(500).json({ message: 'Unable to fetch patient appointments at this time.' });
+    }
+});
+
+// Book Appointment Route
+app.post('/book-appointment', async (req, res) => {
+    const { doctorId, patientId, date, time } = req.body;
+
+    if (!doctorId || !patientId || !date || !time) {
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    try {
+        await pool.query(
+            'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime) VALUES (?, ?, ?, ?)',
+            [doctorId, patientId, date, time]
+        );
+
+        return res.status(200).json({ message: 'Appointment booked successfully.' });
+    } catch (error) {
+        console.error('Error booking appointment:', error);
+        return res.status(500).json({ message: 'Server error while booking appointment.' });
+>>>>>>> 90eafb63372e06f4bb1feea5e2b1c736c5338344
     }
 });
 
@@ -116,6 +164,11 @@ app.put('/appointments/:appointmentId', async (req, res) => {
         return res.status(500).json({ message: 'Server error while updating appointment status.' });
     }
 });
+<<<<<<< HEAD
+=======
+
+// Fetch Psychologist Details by Name
+>>>>>>> 90eafb63372e06f4bb1feea5e2b1c736c5338344
 app.get('/psychologist/:name', async (req, res) => {
     const psychologistName = req.params.name; // Get the psychologist's name from the URL
 
@@ -135,7 +188,9 @@ app.get('/psychologist/:name', async (req, res) => {
         res.status(500).json({ message: 'Server error while fetching psychologist details.' });
     }
 });
+<<<<<<< HEAD
+=======
+
+// Start the server
+>>>>>>> 90eafb63372e06f4bb1feea5e2b1c736c5338344
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-
-
