@@ -1,7 +1,7 @@
-const express = require('express');
-const pool = require('./config/db'); // MySQL Pool
-const cors = require('cors');
-const { body, validationResult } = require('express-validator');
+import express from 'express';
+import pool from './db.js'; // Ensure you use .js if it's an ES module
+import cors from 'cors';
+import { body, validationResult } from 'express-validator';
 
 const app = express();
 app.use(cors());
@@ -100,7 +100,7 @@ app.get('/appointments/:doctorId', async (req, res) => {
     }
 });
 
-
+// Update Appointment Status
 app.put('/appointments/:appointmentId', async (req, res) => {
     const appointmentId = req.params.appointmentId;
     const { status } = req.body;
@@ -118,5 +118,55 @@ app.put('/appointments/:appointmentId', async (req, res) => {
     }
 });
 
+import express from 'express';
+import pool from './config/db.js'; // Ensure this is correctly set up
+import cors from 'cors';
+import { body, validationResult } from 'express-validator';
 
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Route to get all doctors
+app.get('/doctors', async (req, res) => {
+    try {
+        const [doctors] = await pool.query('SELECT * FROM doc'); // Adjust table name if necessary
+        res.status(200).json(doctors);
+    } catch (error) {
+        console.error('Error fetching doctors:', error);
+        res.status(500).json({ message: 'Server error while fetching doctors.' });
+    }
+});
+
+// Route to get appointments by doctor ID
+app.get('/appointments/doctor/:doctorId', async (req, res) => {
+    const doctorId = req.params.doctorId;
+
+    try {
+        const [appointments] = await pool.query('SELECT * FROM appointments WHERE DoctorID = ?', [doctorId]);
+        res.status(200).json({ appointments });
+    } catch (error) {
+        console.error('Error fetching appointments for doctor:', error);
+        res.status(500).json({ message: 'Unable to fetch appointments for this doctor.' });
+    }
+});
+
+// Route to get appointments by patient ID
+app.get('/appointments/patient/:patientId', async (req, res) => {
+    const patientId = req.params.patientId;
+
+    try {
+        const [appointments] = await pool.query('SELECT * FROM appointments WHERE PatientID = ?', [patientId]);
+        res.status(200).json({ appointments });
+    } catch (error) {
+        console.error('Error fetching appointments for patient:', error);
+        res.status(500).json({ message: 'Unable to fetch appointments for this patient.' });
+    }
+});
+
+// Start the server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
