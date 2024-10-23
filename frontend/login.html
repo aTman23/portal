@@ -80,6 +80,7 @@
 <script src="assets/js/bootstrap.min.js"></script>
 
 <script>
+    localStorage.removeItem('token');
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
 event.preventDefault();
 const email = document.getElementById('email').value.trim();
@@ -100,6 +101,7 @@ body: JSON.stringify({ email, password }),
 const result = await response.json();
 if (response.ok) {
 alert('Login successful!');
+localStorage.setItem('token','Login successful!');
 window.location.replace('doctor-dashboard.html');
 } else {
 document.getElementById('loginErrorMessage').innerText = result.message;

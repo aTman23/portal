@@ -1,7 +1,7 @@
-const express = require('express');
-const pool = require('./config/db'); // MySQL Pool
-const cors = require('cors');
-const { body, validationResult } = require('express-validator');
+import express from 'express';
+import pool from './config/db.js'; // MySQL Pool
+import cors from 'cors';
+import { body, validationResult } from 'express-validator';
 
 const app = express();
 app.use(cors());
@@ -26,12 +26,12 @@ app.post('/login', async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM doc WHERE Email = ?', [email]);
         if (rows.length > 0 && rows[0].Password === password) {
-            res.status(200).json({ message: 'Login successful' });
+            return res.status(200).json({ message: 'Login successful' });
         } else {
-            res.status(401).json({ message: 'Invalid email or password.' });
+            return res.status(401).json({ message: 'Invalid email or password.' });
         }
     } catch (error) {
-        res.status(500).json({ message: 'Server error.' });
+        return res.status(500).json({ message: 'Server error.' });
     }
 });
 
@@ -42,9 +42,8 @@ app.post('/doctor-register', [
     body('email').isEmail().withMessage('Email is not valid.'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.')
 ], async (req, res) => {
-    
+
     const errors = validationResult(req);
-    
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -56,10 +55,10 @@ app.post('/doctor-register', [
         console.log('Registering doctor with data:', { name, mobile, email });
 
         await pool.query('INSERT INTO doc (Name, Mobile, Email, Password) VALUES (?, ?, ?, ?)', [name, mobile, email, password]);
-        res.status(201).json({ message: 'Registration successful.' });
+        return res.status(201).json({ message: 'Registration successful.' });
     } catch (error) {
         console.error('Error during doctor registration:', error); // Log the error
-        res.status(500).json({ message: 'Server error during registration.' });
+        return res.status(500).json({ message: 'Server error during registration.' });
     }
 });
 
@@ -72,7 +71,6 @@ app.post('/register', [
 ], async (req, res) => {
 
     const errors = validationResult(req);
-    
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -81,28 +79,28 @@ app.post('/register', [
 
     try {
         await pool.query('INSERT INTO patient (Name, Mobile, Email, Password) VALUES (?, ?, ?, ?)', [name, mobile, email, password]);
-        res.status(201).json({ message: 'Registration successful.' });
+        return res.status(201).json({ message: 'Registration successful.' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error.' });
+        return res.status(500).json({ message: 'Server error.' });
     }
 });
 
 // Fetch Appointments for a Doctor
 app.get('/appointments/:doctorId', async (req, res) => {
-    const doctorId = req.params.doctorId; // Get the doctor's ID from the request
+    const { doctorId } = req.params;
 
     try {
         const [appointments] = await pool.query('SELECT * FROM appointments WHERE DoctorID = ?', [doctorId]);
-        res.status(200).json({ appointments }); // Wrap in an object if needed
+        return res.status(200).json({ appointments });
     } catch (error) {
         console.error('Error fetching appointments:', error);
-        res.status(500).json({ message: 'Unable to fetch appointments at this time.' });
+        return res.status(500).json({ message: 'Unable to fetch appointments at this time.' });
     }
 });
 
-
+// Update Appointment Status
 app.put('/appointments/:appointmentId', async (req, res) => {
-    const appointmentId = req.params.appointmentId;
+    const { appointmentId } = req.params;
     const { status } = req.body;
 
     if (!['accepted', 'declined'].includes(status)) {
@@ -111,12 +109,29 @@ app.put('/appointments/:appointmentId', async (req, res) => {
 
     try {
         await pool.query('UPDATE appointments SET Status = ? WHERE AppointmentID = ?', [status, appointmentId]);
-        res.status(200).json({ message: 'Appointment status updated successfully.' });
+        return res.status(200).json({ message: 'Appointment status updated successfully.' });
     } catch (error) {
         console.error('Error updating appointment:', error);
-        res.status(500).json({ message: 'Server error while updating appointment status.' });
+        return res.status(500).json({ message: 'Server error while updating appointment status.' });
     }
 });
+app.get('/psychologist/:name', async (req, res) => {
+    const psychologistName = req.params.name; // Get the psychologist's name from the URL
 
+    try {
+        // Query the database for the psychologist's details
+        const [rows] = await pool.query('SELECT * FROM doc WHERE Name = ?', [psychologistName]);
 
+        if (rows.length > 0) {
+            // If the psychologist is found, return the details
+            res.status(200).json(rows[0]);
+        } else {
+            // If no psychologist is found, return a 404 status
+            res.status(404).json({ message: 'Psychologist not found.' });
+        }
+    } catch (error) {
+        console.error('Error fetching psychologist details:', error);
+        res.status(500).json({ message: 'Server error while fetching psychologist details.' });
+    }
+});
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
