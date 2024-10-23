@@ -3,140 +3,120 @@
 <head>
     <meta charset="utf-8" />
     <title>PsyShell - Doctor Register</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Favicons -->
     <link href="assets/img/favicon.png" rel="icon" />
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css" />
-
-    <!-- Main CSS -->
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body class="account-page">
-    <div class="main-wrapper">
-        <!-- Header -->
-        <header class="header">
-            <nav class="navbar navbar-expand-lg header-nav">
-                <div class="navbar-header">
-                    <a href="#" id="mobile_btn">
-                        <span class="bar-icon"><span></span><span></span><span></span></span>
-                    </a>
-                    <a href="index-2.html" class="navbar-brand logo">
-                        <img src="assets/img/logo.png" alt="Logo" />
-                    </a>
-                </div>
-                <ul class="nav header-navbar-rht">
-                    <li class="nav-item login-link">
-                        <a href="login.html">Login</a>
-                    </li>
-                </ul>
-            </nav>
-        </header>
-        <!-- /Header -->
 
-        <!-- Registration Content -->
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <div class="account-content">
-                            <div class="row align-items-center justify-content-center">
-                                <div class="col-md-6 login-left">
-                                    <img src="assets/img/login-banner.png" class="img-fluid" alt="Banner" />
-                                </div>
-                                <div class="col-md-6 login-right">
-                                    <div class="login-header">
-                                        <h3>Doctor Register</h3>
-                                    </div>
-                                    <form id="registerForm">
-                                        <div class="form-group form-focus">
-                                            <input type="text" id="name" class="form-control floating" required />
-                                            <label class="focus-label">Name</label>
-                                        </div>
-                                        <div class="form-group form-focus">
-                                            <input type="text" id="mobile" class="form-control floating" required />
-                                            <label class="focus-label">Mobile Number</label>
-                                        </div>
-                                        <div class="form-group form-focus">
-                                            <input type="email" id="email" class="form-control floating" required />
-                                            <label class="focus-label">Email</label>
-                                        </div>
-                                        <div class="form-group form-focus">
-                                            <input type="password" id="password" class="form-control floating" required />
-                                            <label class="focus-label">Password</label>
-                                        </div>
+<div class="main-wrapper">
 
-                                        <button type="submit" class="btn btn-primary btn-block">Signup</button>
-                                        <div id="registerErrorMessage" class="text-danger mt-2"></div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /Registration Content -->
+<!-- Header -->
+<header class="header">
+<nav class="navbar navbar-expand-lg header-nav">
+<div class="navbar-header">
+<a href="#" id="mobile_btn">
+<span class="bar-icon"><span></span><span></span><span></span></span>
+</a>
+<a href="#" class='navbar-brand logo'>
+<img src='assets/img/logo.png' alt='Logo' />
+</a>
+</div>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-top">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6 footer-widget">
-                            <div class="footer-logo">
-                                <img src="assets/img/footer-logo.png" alt="Logo" />
-                            </div>
-                            <p>Streamline Your Practice, Empower Your Well-being.</p>
-                        </div>
-                        <div class="col-md-6 footer-widget">
-                            <h2 class="footer-title">Contact Us</h2>
-                            <p><i class="fas fa-envelope"></i> contact@psyshell.help</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- /Footer -->
-    </div>
+<ul class='nav header-navbar-rht'>
+<li class='nav-item login-link'>
+<a href='login.html'>Login</a>
+</li>
+</ul>
 
-    <!-- Scripts -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const name = document.getElementById('name').value.trim();
-            const mobile = document.getElementById('mobile').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+</nav>
 
-            if (!name || !mobile || !email || !password) {
-                document.getElementById('registerErrorMessage').innerText = 'All fields are required.';
-                return;
-            }
+<!-- Registration Content -->
+<div class='content'>
+<div class='container-fluid'>
+<div class='row'>
+<div class='col-md-8 offset-md-2'>
+<div class='account-content'>
+<div class='row align-items-center justify-content-center'>
+<div class='col-md-6 login-left'>
+<img src='assets/img/login-banner.png' alt='Banner' />
+</div>
 
-            try {
-                const response = await fetch('http://localhost:5000/register-doctor', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, mobile, email, password }),
-                });
+<div class='col-md-6 login-right'>
+<div class='login-header'>
+<h3>Doctor Register</h3>
+</div>
 
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Registration successful! Please log in.');
-                    window.location.href = 'login.html';
-                } else {
-                    document.getElementById('registerErrorMessage').innerText = result.message;
-                }
-            } catch (error) {
-                document.getElementById('registerErrorMessage').innerText = 'Server error. Try again later.';
-            }
+<form id='registerForm'>
+<div class='form-group form-focus'>
+<input type='text' id='name' required placeholder='Name' />
+<label>Name*</label></div>
+
+<div class='form-group form-focus'>
+<input type='text' id='mobile' pattern='\d{10}' title='Enter a valid mobile number' required placeholder='Mobile' />
+<label>Mobile Number*</label></div>
+
+<div class='form-group form-focus'>
+<input type='email' id='email' required placeholder='Email' />
+<label>Email*</label></div>
+
+<div class='form-group form-focus'>
+<input type='password' id='password' minlength='6' required placeholder='Password' />
+<label>Password*</label></div>
+
+<button type='submit'>Signup</button>
+
+<!-- Error Message -->
+<div id='registerErrorMessage' style='color:red;'></div>
+
+<script src='assets/js/jquery.min.js'></script> 
+<script src='assets/js/bootstrap.min.js'></script> 
+<script>
+// Handle form submission
+document.getElementById('registerForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!name || !mobile || !email || !password) {
+        document.getElementById('registerErrorMessage').innerText = 'All fields are required.';
+        return;
+    }
+
+    try {
+        
+        const response = await fetch('http://localhost:5000/doctor-register', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, mobile, email, password }),
         });
-    </script>
-</body>
-</html>
+
+        const result = await response.json();
+        if (response.ok) {
+            alert('Registration successful! Please log in.');
+            window.location.href = 'login.html';
+        } else {
+            // Handle errors from server
+            document.getElementById('registerErrorMessage').innerText = result.errors.map(err => err.msg).join(', ');
+        }
+    } catch (error) {
+        console.error('Error during registration:', error); // Log error for debugging
+        document.getElementById('registerErrorMessage').innerText = 'Server error. Try again later.';
+    }
+});
+</script>
+
+ </form> 
+ </div> 
+ </div> 
+ </div> 
+ </div> 
+ </div> 
+ </body> 
+ </html>
