@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Page</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if 'token' exists in localStorage and has the correct value
+            const token = localStorage.getItem('token');
+            
+            if (token === 'Login successful!') {
+                // If the token is valid, redirect to the dashboard
+                window.location.href = 'doctor-dashboard.html';
+            } else {
+                // If no valid token, redirect to the login page
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</head>
+<body>
+    <p>Redirecting...</p>
+</body>
+</html>
