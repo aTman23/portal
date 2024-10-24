@@ -2238,6 +2238,28 @@ html.menu-opened body {
 	color: #fff;
 }
 
+/* Base styles for both links */
+.nav-item.login-link a {
+	display: inline-block;
+	padding: 12px 20px; /* Padding for a nice button size */
+	margin-right: 15px; /* Spacing between buttons */
+	font-size: 16px;
+	font-weight: 600;
+	color: #fff; /* White text */
+	text-transform: uppercase; /* Make text uppercase */
+	background-color: #1abc9c; /* Default button background */
+	border: none;
+	border-radius: 30px; /* Rounded corners */
+	text-decoration: none; /* Remove underline */
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+	transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Smooth hover effect */
+  }
+/* Hover effect */
+.nav-item.login-link a:hover {
+  transform: translateY(-3px); /* Lift button slightly on hover */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+}
+
 /*-----------------
 	15. Home
 -----------------------*/
