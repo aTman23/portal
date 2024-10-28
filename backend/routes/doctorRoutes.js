@@ -15,7 +15,25 @@ router.get('/:name', async (req, res) => {
             return res.status(404).json({ message: 'Psychologist not found.' });
         }
     } catch (error) {
+        console.error(error);  // Log the error for debugging
         return res.status(500).json({ message: 'Server error while fetching psychologist details.' });
+    }
+});
+
+// Update Psychologist Details
+router.post('/update', async (req, res) => {
+    const { id, updatedInfo } = req.body;  
+
+    try {
+        const [result] = await pool.query('UPDATE doc SET ? WHERE id = ?', [updatedInfo, id]);
+        if (result.affectedRows > 0) {
+            return res.status(200).json({ message: 'Psychologist details updated successfully.' });
+        } else {
+            return res.status(404).json({ message: 'Psychologist not found.' });
+        }
+    } catch (error) {
+        console.error(error);  // Log the error for debugging
+        return res.status(500).json({ message: 'Server error while updating psychologist details.' });
     }
 });
 
