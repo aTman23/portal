@@ -3575,7 +3575,11 @@ html.menu-opened body {
 .submit-section.proceed-btn {
 	margin: 0 0 30px;
 }
-
+.submit-btn.disabled {
+	pointer-events: none;
+	opacity: 0.5;
+  }
+  
 /*-----------------
 	19. Checkout
 -----------------------*/

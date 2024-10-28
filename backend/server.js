@@ -5,11 +5,15 @@ import authRoutes from './routes/authRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
 import patientRoutes from './routes/patientRoutes.js';
-
 import basicInfoRoutes from './routes/basicInfoRoutes.js';
 import educationRoutes from './routes/educationRoutes.js';
 import experienceRoutes from './routes/experienceRoutes.js';
 import pricingRoutes from './routes/pricingRoutes.js';
+import timeslotRoutes from './routes/timeslotRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
+
+
+
 
 dotenv.config();
 
@@ -18,6 +22,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/appointments/timeslots', timeslotRoutes);
+app.use('/appointments', appointmentRoutes);
+app.use('/notifications', notificationRoutes);
 
 // Middleware to log incoming requests
 app.use((req, res, next) => {
