@@ -30,6 +30,22 @@
       <script src="assets/js/html5shiv.min.js"></script>
       <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+  const storedData = JSON.parse(localStorage.getItem("doc-data"));
+
+   const userData = storedData?.profile;
+  document.getElementById("DocName").textContent = `${userData?.FirstName} ${userData?.LastName}`
+  document.getElementById("AboutMe").textContent = `${userData?.AboutMe}`
+
+})
+
+</script>
+
+
+
   </head>
   <body>
     <!-- Main Wrapper -->
@@ -166,10 +182,10 @@
                       />
                     </a>
                     <div class="profile-det-info">
-                      <h3>Dr.Madhurima Mopidevi</h3>
+                      <h3 id="DocName">Dr.Madhurima Mopidevi</h3>
 
                       <div class="patient-details">
-                        <h6 class="mb-0">
+                        <h6 class="mb-0" id="AboutMe">
                         	MSc Psychology, Professional diploma in Psychotherapies 
                         </h6>
                       </div>
@@ -197,24 +213,19 @@
                           <span>My Patients</span>
                         </a>
                       </li>
-                      <li>
-                        <!-- <a href="schedule-timings.html">
+                      <!-- <li>
+                         <a href="schedule-timings.html">
                           <i class="fas fa-hourglass-start"></i>
                           <span>Schedule Timings</span>
                         </a>
-                      </li>
-                      <li>
-                        <a href="invoices.html">
-                          <i class="fas fa-file-invoice"></i>
-                          <span>Invoices</span>
-                        </a>
-                      </li>
-                      <li>
+                      </li> -->
+                    
+                      <!-- <li>
                         <a href="reviews.html">
                           <i class="fas fa-star"></i>
                           <span>Reviews</span>
                         </a>
-                      </li>
+                      </li> -->
 
                       <li>
                         <a href="doctor-profile-settings.html">
@@ -229,7 +240,7 @@
                           <span>Change Password</span>
                         </a>
                       </li>
-                      <li> -->
+                      <li> 
                         <a href="login.html">
                           <i class="fas fa-sign-out-alt"></i>
                           <span>Logout</span>
