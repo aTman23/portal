@@ -892,7 +892,7 @@
       const profileForm = document.querySelector("form");
       const profileFormSave = document.getElementById("saveChanges");
 
-      const API_BASE_URL = "http://localhost:5000"; // API base URL constant
+      const API_BASE_URL = "https://portalserver-sepia.vercel.app"; // API base URL constant
 
       function getMatchingField(form, camelCaseKey) {
         let field = form.querySelector(`[name="${camelCaseKey}"]`);
@@ -1104,7 +1104,7 @@
 
         try {
           const response = await fetch(
-            `http://localhost:5000/doctors/doctor/${doctorId}/specializations`,
+            `https://portalserver-sepia.vercel.app/doctors/doctor/${doctorId}/specializations`,
             {
               method: "GET",
               headers: {
@@ -1149,7 +1149,7 @@
 
         try {
           const response = await fetch(
-            `http://localhost:5000/doctors/doctor/${doctorId}/services`,
+            `https://portalserver-sepia.vercel.app/doctors/doctor/${doctorId}/services`,
             {
               method: "GET",
               headers: {

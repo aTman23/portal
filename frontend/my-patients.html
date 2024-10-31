@@ -71,7 +71,7 @@
         async function fetchAnalyticsData() {
           try {
             const response = await fetch(
-              `http://192.168.1.4:5000/appoint/patients/${userData?.UserID}`
+              `https://portalserver-sepia.vercel.app/appoint/patients/${userData?.UserID}`
             );
             if (!response.ok) throw new Error("Network response was not ok");
 
