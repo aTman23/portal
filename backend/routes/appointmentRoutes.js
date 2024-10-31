@@ -1,7 +1,7 @@
 import express from 'express';
 import pool from '../config/db.js';
 import nodemailer from 'nodemailer'; // for email notifications
-import { generateGoogleMeetLink } from '../utils/googleMeet'; // a utility function for generating Google Meet links
+import  generateGoogleMeetLink  from '../utils/meet.js'; // a utility function for generating Google Meet links
 
 const router = express.Router();
 
@@ -42,7 +42,7 @@ router.get('/patient/:patientId', async (req, res) => {
 
 // Book Appointment Route
 router.post('/book', async (req, res) => {
-    const { doctorId, patientId, date, time, patientEmail } = req.body; // Added patientEmail in the request body
+    const { doctorId, patientId, date, time, patientEmail } = req.body; 
 
     if (!doctorId || !patientId || !date || !time || !patientEmail) {
         return res.status(400).json({ message: 'All fields are required, including patient email.' });
