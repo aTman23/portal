@@ -74,7 +74,6 @@
                 <a href="doctor-dashboard.html">Dashboard</a>
               </li>
               <li><a href="appointments.html">Appointments</a></li>
-              <li><a href="schedule-timings.html">Schedule Timing</a></li>
               <li>
                 <a href="doctor-profile.html">My Profile</a>
               </li>
@@ -84,16 +83,6 @@
             </ul>
           </div>
           <ul class="nav header-navbar-rht">
-            <li class="nav-item contact-item">
-              <div class="header-contact-img">
-                <i class="far fa-hospital"></i>
-              </div>
-              <div class="header-contact-detail">
-                <p class="contact-header">Contact</p>
-                <p class="contact-info-header">+1 315 369 5943</p>
-              </div>
-            </li>
-
             <!-- User Menu -->
             <li class="nav-item dropdown has-arrow logged-item">
               <a
@@ -103,10 +92,11 @@
               >
                 <span class="user-img">
                   <img
-                    class="rounded-circle"
+                    class="rounded-circle profileImage"
                     src="assets/img/doctors/doctor-thumb-02.jpg"
                     width="31"
                     alt="Darren Elder"
+
                   />
                 </span>
               </a>
@@ -116,11 +106,11 @@
                     <img
                       src="assets/img/doctors/doctor-thumb-02.jpg"
                       alt="User Image"
-                      class="avatar-img rounded-circle"
+                      class="avatar-img rounded-circle profileImage"
                     />
                   </div>
                   <div class="user-text">
-                    <h6>Darren Elder</h6>
+                    <h6 id="DocNa">Darren Elder</h6>
                     <p class="text-muted mb-0">Doctor</p>
                   </div>
                 </div>
@@ -174,13 +164,14 @@
                       <img
                         src="assets/img/doctors/doctor-thumb-02.jpg"
                         alt="User Image"
+                        class="profileImage"
                       />
                     </a>
                     <div class="profile-det-info">
-                      <h3>Dr. Darren Elder</h3>
+                      <h3 id="DocName">Dr. Darren Elder</h3>
 
                       <div class="patient-details">
-                        <h5 class="mb-0">
+                        <h5 class="mb-0" id="AboutMe">
                           BDS, MDS - Oral & Maxillofacial Surgery
                         </h5>
                       </div>
@@ -206,24 +197,6 @@
                         <a href="my-patients.html">
                           <i class="fas fa-user-injured"></i>
                           <span>My Patients</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="schedule-timings.html">
-                          <i class="fas fa-hourglass-start"></i>
-                          <span>Schedule Timings</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="invoices.html">
-                          <i class="fas fa-file-invoice"></i>
-                          <span>Invoices</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a href="reviews.html">
-                          <i class="fas fa-star"></i>
-                          <span>Reviews</span>
                         </a>
                       </li>
 
@@ -254,482 +227,525 @@
             </div>
             <div class="col-md-7 col-lg-8 col-xl-9">
               <!-- Basic Information -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Basic Information</h4>
-                  <div class="row form-row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <div class="change-avatar">
-                          <div class="profile-img">
-                            <img
-                              src="assets/img/doctors/doctor-thumb-02.jpg"
-                              alt="User Image"
-                            />
-                          </div>
-                          <div class="upload-img">
-                            <div class="change-photo-btn">
-                              <span
-                                ><i class="fa fa-upload"></i> Upload Photo</span
-                              >
-                              <input type="file" class="upload" />
+              <form id="update-profile">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Basic Information</h4>
+                    <div class="row form-row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <div class="change-avatar">
+                            <div class="profile-img">
+                              <img
+                                src="assets/img/doctors/doctor-thumb-02.jpg"
+                                alt="User Image"
+                                id="profilePreview"
+                                class="profileImage"
+                              />
                             </div>
-                            <small class="form-text text-muted"
-                              >Allowed JPG, GIF or PNG. Max size of 2MB</small
-                            >
+                            <div class="upload-img">
+                              <div class="change-photo-btn">
+                                <span
+                                  ><i class="fa fa-upload"></i> Upload
+                                  Photo</span
+                                >
+                                <input
+                                  type="file"
+                                  id="profileImageUpload"
+                                  name="profileImage"
+                                  accept="image/jpeg"
+                                  aria-label="Profile Image Upload"
+                                />
+                              </div>
+                              <small class="form-text text-muted"
+                                >Allowed JPG, GIF or PNG. Max size of 2MB</small
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label
+                            >Username <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="username"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label
+                            >Email <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="email"
+                            class="form-control"
+                            readonly
+                            name="email"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label
+                            >First Name
+                            <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="firstName"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label
+                            >Last Name <span class="text-danger">*</span></label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="lastName"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Phone Number</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="phoneNumber"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Gender</label>
+                          <select class="form-control select" name="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group mb-0">
+                          <label>Date of Birth</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="dateOfBirth"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /Basic Information -->
+
+                <!-- About Me -->
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">About Me</h4>
+                    <div class="form-group mb-0">
+                      <label>Biography</label>
+                      <textarea
+                        class="form-control"
+                        rows="5"
+                        name="aboutMe"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+                <!-- /About Me -->
+
+                <!-- Clinic Info -->
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Clinic Info</h4>
+                    <div class="row form-row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Clinic Name</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="clinicName"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Clinic Address</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="clinicAddress"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-12 d-none">
+                        <div class="form-group">
+                          <label>Clinic Images</label>
+                        </div>
+                        <div class="upload-wrap d-none">
+                          <div class="upload-images">
+                            <img
+                              src="assets/img/features/feature-01.jpg"
+                              alt="Upload Image"
+                            />
+                            <a
+                              href="javascript:void(0);"
+                              class="btn btn-icon btn-danger btn-sm"
+                              ><i class="far fa-trash-alt"></i
+                            ></a>
+                          </div>
+                          <div class="upload-images">
+                            <img
+                              src="assets/img/features/feature-02.jpg"
+                              alt="Upload Image"
+                            />
+                            <a
+                              href="javascript:void(0);"
+                              class="btn btn-icon btn-danger btn-sm"
+                              ><i class="far fa-trash-alt"></i
+                            ></a>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label
-                          >Username <span class="text-danger">*</span></label
-                        >
-                        <input type="text" class="form-control" readonly />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Email <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" readonly />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label
-                          >First Name <span class="text-danger">*</span></label
-                        >
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label
-                          >Last Name <span class="text-danger">*</span></label
-                        >
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Gender</label>
-                        <select class="form-control select">
-                          <option>Select</option>
-                          <option>Male</option>
-                          <option>Female</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group mb-0">
-                        <label>Date of Birth</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
                   </div>
                 </div>
-              </div>
-              <!-- /Basic Information -->
+                <!-- /Clinic Info -->
 
-              <!-- About Me -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">About Me</h4>
-                  <div class="form-group mb-0">
-                    <label>Biography</label>
-                    <textarea class="form-control" rows="5"></textarea>
-                  </div>
-                </div>
-              </div>
-              <!-- /About Me -->
-
-              <!-- Clinic Info -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Clinic Info</h4>
-                  <div class="row form-row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Clinic Name</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Clinic Address</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label>Clinic Images</label>
-                        <form action="#" class="dropzone"></form>
-                      </div>
-                      <div class="upload-wrap">
-                        <div class="upload-images">
-                          <img
-                            src="assets/img/features/feature-01.jpg"
-                            alt="Upload Image"
+                <!-- Contact Details -->
+                <div class="card contact-card">
+                  <div class="card-body">
+                    <h4 class="card-title">Contact Details</h4>
+                    <div class="row form-row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Address Line 1</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="addressLine1"
                           />
-                          <a
-                            href="javascript:void(0);"
-                            class="btn btn-icon btn-danger btn-sm"
-                            ><i class="far fa-trash-alt"></i
-                          ></a>
                         </div>
-                        <div class="upload-images">
-                          <img
-                            src="assets/img/features/feature-02.jpg"
-                            alt="Upload Image"
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="control-label">Address Line 2</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="addressLine2"
                           />
-                          <a
-                            href="javascript:void(0);"
-                            class="btn btn-icon btn-danger btn-sm"
-                            ><i class="far fa-trash-alt"></i
-                          ></a>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="control-label">City</label>
+                          <input type="text" class="form-control" name="city" />
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="control-label">State / Province</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="stateProvince"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="control-label">Country</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="country"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="control-label">Postal Code</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="postalCode"
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- /Clinic Info -->
+                <!-- /Contact Details -->
 
-              <!-- Contact Details -->
-              <div class="card contact-card">
-                <div class="card-body">
-                  <h4 class="card-title">Contact Details</h4>
-                  <div class="row form-row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label>Address Line 1</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label class="control-label">Address Line 2</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label class="control-label">City</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
+                <!-- Pricing -->
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Pricing</h4>
 
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label class="control-label">State / Province</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label class="control-label">Country</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label class="control-label">Postal Code</label>
-                        <input type="text" class="form-control" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- /Contact Details -->
-
-              <!-- Pricing -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Pricing</h4>
-
-                  <div class="form-group mb-0">
-                    <div id="pricing_select">
-                      <div
-                        class="custom-control custom-radio custom-control-inline"
-                      >
-                        <input
-                          type="radio"
-                          id="price_free"
-                          name="rating_option"
-                          class="custom-control-input"
-                          value="price_free"
-                          checked
-                        />
-                        <label class="custom-control-label" for="price_free"
-                          >Free</label
+                    <div class="form-group mb-0">
+                      <div id="pricing_select">
+                        <div
+                          class="custom-control custom-radio custom-control-inline"
                         >
+                          <input
+                            type="radio"
+                            id="price_free"
+                            name="pricingFree"
+                            class="custom-control-input"
+                            value="price_free"
+                            checked
+                          />
+                          <label class="custom-control-label" for="price_free"
+                            >Free</label
+                          >
+                        </div>
+                        <div
+                          class="custom-control custom-radio custom-control-inline"
+                        >
+                          <input
+                            type="radio"
+                            id="price_custom"
+                            name="pricingFree"
+                            value="custom_price"
+                            class="custom-control-input"
+                          />
+                          <label class="custom-control-label" for="price_custom"
+                            >Custom Price (per hour)</label
+                          >
+                        </div>
                       </div>
-                      <div
-                        class="custom-control custom-radio custom-control-inline"
-                      >
+                    </div>
+
+                    <div
+                      class="row custom_price_cont"
+                      id="custom_price_cont"
+                      style="display: none"
+                    >
+                      <div class="col-md-4">
                         <input
-                          type="radio"
-                          id="price_custom"
-                          name="rating_option"
-                          value="custom_price"
-                          class="custom-control-input"
+                          type="text"
+                          class="form-control"
+                          id="custom_rating_input"
+                          name="customPricePerHour"
+                          value=""
+                          placeholder="20"
                         />
-                        <label class="custom-control-label" for="price_custom"
-                          >Custom Price (per hour)</label
+                        <small class="form-text text-muted"
+                          >Custom price you can add</small
                         >
                       </div>
                     </div>
                   </div>
+                </div>
+                <!-- /Pricing -->
 
-                  <div
-                    class="row custom_price_cont"
-                    id="custom_price_cont"
-                    style="display: none"
-                  >
-                    <div class="col-md-4">
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="custom_rating_input"
-                        name="custom_rating_count"
-                        value=""
-                        placeholder="20"
-                      />
-                      <small class="form-text text-muted"
-                        >Custom price you can add</small
-                      >
+                <!-- UPI Details -->
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">UPI ID</h4>
+                    <div class="form-group">
+                      <input type="text" class="form-control" />
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- /Pricing -->
 
-              <!-- UPI Details -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">UPI ID</h4>
-                  <div class="form-group">
-                    <input type="text" class="form-control" />
-                  </div>
-                </div>
-              </div>
+                <!-- Services and Specialization -->
 
-              <!-- Services and Specialization -->
-              <div class="card services-card">
-                <div class="card-body">
-                  <h4 class="card-title">Services and Specialization</h4>
-                  <div class="form-group">
-                    <label>Services</label>
-                    <input
-                      type="text"
-                      data-role="tagsinput"
-                      class="input-tags form-control"
-                      placeholder="Enter Services"
-                      name="services"
-                      value="Tooth cleaning "
-                      id="services"
-                    />
-                    <small class="form-text text-muted"
-                      >Note : Type & Press enter to add new services</small
-                    >
-                  </div>
-                  <div class="form-group mb-0">
-                    <label>Specialization </label>
-                    <input
-                      class="input-tags form-control"
-                      type="text"
-                      data-role="tagsinput"
-                      placeholder="Enter Specialization"
-                      name="specialist"
-                      value="Children Care,Dental Care"
-                      id="specialist"
-                    />
-                    <small class="form-text text-muted"
-                      >Note : Type & Press enter to add new
-                      specialization</small
-                    >
-                  </div>
-                </div>
-              </div>
-              <!-- /Services and Specialization -->
+                <!-- /Services and Specialization -->
 
-              <!-- Education -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Education</h4>
-                  <div class="education-info">
-                    <div class="row form-row education-cont">
-                      <div class="col-12 col-md-10 col-lg-11">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Education</h4>
+                    <div id="education-container">
+                      <div class="education-info" data-index="0">
                         <div class="row form-row">
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>Degree</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="degree"
+                              />
                             </div>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>College/Institute</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="collegeInstitute"
+                              />
                             </div>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>Year of Completion</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="yearOfCompletion"
+                              />
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="add-more">
-                    <a href="javascript:void(0);" class="add-education"
-                      ><i class="fa fa-plus-circle"></i> Add More</a
-                    >
+                    <div class="add-more">
+                      <a href="javascript:void(0);" class="add-education"
+                        ><i class="fa fa-plus-circle"></i> Add More</a
+                      >
+                    </div>
                   </div>
                 </div>
-              </div>
-              <!-- /Education -->
+                <!-- /Education -->
 
-              <!-- Experience -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Experience</h4>
-                  <div class="experience-info">
-                    <div class="row form-row experience-cont">
-                      <div class="col-12 col-md-10 col-lg-11">
+                <!-- Experience -->
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Experience</h4>
+                    <div id="experience-container">
+                      <div class="experience-info" data-index="0">
                         <div class="row form-row">
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>Hospital Name</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="hospitalName"
+                              />
                             </div>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>From</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="fromDate"
+                              />
                             </div>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>To</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="toDate"
+                              />
                             </div>
                           </div>
                           <div class="col-12 col-md-6 col-lg-4">
                             <div class="form-group">
                               <label>Designation</label>
-                              <input type="text" class="form-control" />
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="designation"
+                              />
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="add-more">
-                    <a href="javascript:void(0);" class="add-experience"
-                      ><i class="fa fa-plus-circle"></i> Add More</a
-                    >
-                  </div>
-                </div>
-              </div>
-              <!-- /Experience -->
-
-              <!-- Awards -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Awards</h4>
-                  <div class="awards-info">
-                    <div class="row form-row awards-cont">
-                      <div class="col-12 col-md-5">
-                        <div class="form-group">
-                          <label>Awards</label>
-                          <input type="text" class="form-control" />
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-5">
-                        <div class="form-group">
-                          <label>Year</label>
-                          <input type="text" class="form-control" />
-                        </div>
-                      </div>
+                    <div class="add-more">
+                      <a href="javascript:void(0);" class="add-experience"
+                        ><i class="fa fa-plus-circle"></i> Add More</a
+                      >
                     </div>
                   </div>
-                  <div class="add-more">
-                    <a href="javascript:void(0);" class="add-award"
-                      ><i class="fa fa-plus-circle"></i> Add More</a
-                    >
-                  </div>
                 </div>
-              </div>
-              <!-- /Awards -->
+                <!-- /Experience -->
+                <div class="card services-card">
+                  <div class="card-body">
+                    <h4 class="card-title">Services and Specialization</h4>
 
-              <!-- Memberships -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Memberships</h4>
-                  <div class="membership-info">
-                    <div class="row form-row membership-cont">
-                      <div class="col-12 col-md-10 col-lg-5">
-                        <div class="form-group">
-                          <label>Memberships</label>
-                          <input type="text" class="form-control" />
-                        </div>
+                    <!-- Services Input Field -->
+                    <div class="form-group">
+                      <label>Services</label>
+                      <div
+                        id="servicesContainer"
+                        class="input-tags form-control"
+                        style="height: 80px"
+                      >
+                        <div id="serviceTagsInput"></div>
+                        <input
+                          type="text"
+                          id="newServiceInput"
+                          class="tag-input"
+                          placeholder="Enter Services"
+                        />
                       </div>
+                      <small class="form-text text-muted"
+                        >Note: Type & Press enter to add new services</small
+                      >
+                    </div>
+
+                    <!-- Specialization Input Field -->
+                    <div class="form-group mb-0 p-10">
+                      <label>Specialization</label>
+                      <div
+                        id="specializationContainer"
+                        class="input-tags form-control p-10"
+                        style="height: 80px"
+                      >
+                        <div id="specializationTagsInput"></div>
+
+                        <input
+                          type="text"
+                          id="newSpecializationInput"
+                          class="tag-input"
+                          placeholder="Enter Specialization"
+                        />
+                      </div>
+                      <small class="form-text text-muted"
+                        >Note: Type & Press enter to add new
+                        specialization</small
+                      >
                     </div>
                   </div>
-                  <div class="add-more">
-                    <a href="javascript:void(0);" class="add-membership"
-                      ><i class="fa fa-plus-circle"></i> Add More</a
-                    >
-                  </div>
                 </div>
-              </div>
-              <!-- /Memberships -->
 
-              <!-- Registrations -->
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Registrations</h4>
-                  <div class="registrations-info">
-                    <div class="row form-row reg-cont">
-                      <div class="col-12 col-md-5">
-                        <div class="form-group">
-                          <label>Registrations</label>
-                          <input type="text" class="form-control" />
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-5">
-                        <div class="form-group">
-                          <label>Year</label>
-                          <input type="text" class="form-control" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="add-more">
-                    <a href="javascript:void(0);" class="add-reg"
-                      ><i class="fa fa-plus-circle"></i> Add More</a
-                    >
-                  </div>
+                <!-- /Services and Specialization -->
+
+                <!-- Awards -->
+
+                <!-- /Awards -->
+
+                <!-- Memberships -->
+
+                <!-- /Memberships -->
+
+                <!-- Registrations -->
+
+                <!-- /Registrations -->
+
+                <div class="submit-section submit-btn-bottom">
+                  <button
+                    type="submit"
+                    class="btn btn-primary submit-btn"
+                    id="saveChanges"
+                  >
+                    Save Changes
+                  </button>
                 </div>
-              </div>
-              <!-- /Registrations -->
-
-              <div class="submit-section submit-btn-bottom">
-                <button type="submit" class="btn btn-primary submit-btn">
-                  Save Changes
-                </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -860,6 +876,337 @@
     <!-- Custom JS -->
     <script src="assets/js/script.js"></script>
   </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const storedData = JSON.parse(localStorage.getItem("doc-data"));
+      const userData = storedData?.profile;
+      document.getElementById(
+        "DocName"
+      ).textContent = `${userData?.FirstName} ${userData?.LastName}`;
+      document.getElementById("AboutMe").textContent = `${userData?.AboutMe}`;
+      document.getElementById(
+        "DocNa"
+      ).textContent = `${userData?.FirstName} ${userData?.LastName}`;
 
-  <!-- doccure/doctor-profile-settings.html  30 Nov 2019 04:12:15 GMT -->
+      const profileForm = document.querySelector("form");
+      const profileFormSave = document.getElementById("saveChanges");
+
+      const API_BASE_URL = "http://localhost:5000"; // API base URL constant
+
+      function getMatchingField(form, camelCaseKey) {
+        let field = form.querySelector(`[name="${camelCaseKey}"]`);
+        if (!field) {
+          field = Array.from(form.elements).find(
+            (element) =>
+              element.name.toLowerCase() === camelCaseKey.toLowerCase()
+          );
+        }
+        return field;
+      }
+
+      // Pre-fill form fields with stored data if available
+      if (storedData) {
+        Object.keys(storedData.profile).forEach((key) => {
+          const field = getMatchingField(profileForm, key);
+          if (field) {
+            if (field.type === "radio" || field.type === "checkbox") {
+              field.checked = field.value === storedData.profile[key];
+            } else {
+
+              if(key!== "ProfileImage"){
+                field.value = storedData.profile[key];
+
+              }
+
+            }
+          }
+        });
+      }
+
+      // Profile image validation and preview
+      document
+        .getElementById("profileImageUpload")
+        .addEventListener("change", function () {
+          const file = this.files[0];
+          if (file && file.size <= 100 * 1024 ) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              document.getElementById("profilePreview").src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            alert("File size exceeds 100kb or is invalid!");
+            this.value = ""; // Clear the file input
+          }
+        });
+
+      // Price input toggle
+      const customPriceInput = document.getElementById("customPriceInput");
+      document
+        .getElementById("price_free")
+        .addEventListener(
+          "change",
+          () => (customPriceInput.style.display = "none")
+        );
+      document
+        .getElementById("price_custom")
+        .addEventListener(
+          "change",
+          () => (customPriceInput.style.display = "block")
+        );
+
+      // Form submission handler
+      profileFormSave.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          const educationData = Array.from(
+            document.querySelectorAll("#education-container .education-info")
+          ).map((education) => ({
+            degree: education.querySelector("[name='degree']").value,
+            collegeInstitute: education.querySelector(
+              "[name='collegeInstitute']"
+            ).value,
+            yearOfCompletion: education.querySelector(
+              "[name='yearOfCompletion']"
+            ).value,
+          }));
+
+          const experienceData = Array.from(
+            document.querySelectorAll("#experience-container .experience-info")
+          ).map((experience) => ({
+            hospitalName: experience.querySelector("[name='hospitalName']")
+              .value,
+            fromDate: experience.querySelector("[name='fromDate']").value,
+            toDate: experience.querySelector("[name='toDate']").value,
+            designation: experience.querySelector("[name='designation']").value,
+          }));
+
+          const formData = new FormData(profileForm);
+          formData.append("education", JSON.stringify(educationData));
+          formData.append("experience", JSON.stringify(experienceData));
+
+          const response = await fetch(
+            `${API_BASE_URL}/doctors/update-profile/${storedData.profile.UserID}`,
+            {
+              method: "PUT",
+              body: formData,
+            }
+          );
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("doc-data", JSON.stringify(data.data));
+            alert("Profile updated successfully!");
+          } else {
+            alert("Error updating profile: " + data.error);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred.");
+        }
+      });
+
+      // Function to add a tag (service or specialization)
+      async function addTag(name, type) {
+        if (!name) return;
+        const endpoint =
+          type === "service" ? "add-service" : "add-specialization";
+        const doctorId = storedData.profile.UserID;
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/doctors/doctor/${doctorId}/${endpoint}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ [`${type}Name`]: name }),
+            }
+          );
+
+          const result = await response.json();
+          console.log(result);
+          if (result.message === "Service added to doctor successfully") {
+            const tagElement = createTagElement(name, type);
+            document.getElementById(`${type}TagsInput`).appendChild(tagElement);
+            document.getElementById(`new${capitalize(type)}Input`).value = ""; // Clear input
+            console.log(result.message);
+          }
+        } catch (error) {
+          console.error(`Error adding ${type}:`, error);
+        }
+      }
+
+      // Create tag element with remove button
+      function createTagElement(name, type) {
+        const tag = document.createElement("span");
+        tag.className = "tag badge badge-info m-2 h6";
+        tag.textContent = name;
+
+        const removeBtn = document.createElement("span");
+        removeBtn.className = "remove-tag";
+        removeBtn.textContent = " ×";
+        tag.appendChild(removeBtn);
+        removeBtn.addEventListener("click", () => removeTag(name, type, tag));
+
+        return tag;
+      }
+
+      // Remove tag from both UI and backend
+      async function removeTag(name, type, tagElement) {
+        const doctorId = storedData.profile.UserID;
+        const endpoint =
+          type === "service" ? "remove-service" : "remove-specialization";
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/doctors/doctor/${doctorId}/${endpoint}`,
+            {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ [`${type}Name`]: name }),
+            }
+          );
+
+          const result = await response.json();
+          if (response.ok) {
+            tagElement.remove();
+          }
+        } catch (error) {
+          console.error(`Error removing ${type}:`, error);
+        }
+      }
+
+      // Helper to capitalize type names for input IDs
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      document
+        .getElementById("newServiceInput")
+        .addEventListener("keydown", (e) => handleTagInput(e, "service"));
+      document
+        .getElementById("newSpecializationInput")
+        .addEventListener("keydown", (e) =>
+          handleTagInput(e, "specialization")
+        );
+      async function handleTagInput(event, type) {
+        if (event.key === "Enter" && event.target.value.trim() !== "") {
+          await addTag(event.target.value.trim(), type);
+          event.target.value = "";
+          event.preventDefault();
+        }
+      }
+
+      // Function to fetch and display specializations
+      async function fetchSpecializations() {
+        const doctorId = storedData.profile.UserID; // Replace with actual doctor ID
+
+        try {
+          const response = await fetch(
+            `http://localhost:5000/doctors/doctor/${doctorId}/specializations`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            const specializations = data.specializations || []; // Assume data contains a 'specializations' array
+            displaySpecializations(specializations);
+          } else {
+            console.error("Failed to fetch specializations:", response.status);
+          }
+        } catch (error) {
+          console.error("Error fetching specializations:", error);
+        }
+      }
+
+      // Function to display each specialization as a tag or list item
+      function displaySpecializations(specializations) {
+        const specializationContainer = document.getElementById(
+          "specializationTagsInput"
+        );
+        specializationContainer.innerHTML = ""; // Clear previous tags
+
+        specializations.forEach((specialization) => {
+          const specializationTag = createTagElement(
+            specialization.SpecializationName,
+            "specialization"
+          ); // Assuming specialization has a 'name' property
+          specializationContainer.appendChild(specializationTag);
+        });
+      }
+
+      // Call fetchSpecializations on page load or when needed
+      fetchSpecializations();
+      // Function to fetch and display services
+      async function fetchServices() {
+        const doctorId = storedData.profile.UserID; // Replace with actual doctor ID
+
+        try {
+          const response = await fetch(
+            `http://localhost:5000/doctors/doctor/${doctorId}/services`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            const services = data.services || []; // Assuming data contains a 'services' array
+            displayServices(services);
+          } else {
+            console.error("Failed to fetch services:", response.status);
+          }
+        } catch (error) {
+          console.error("Error fetching services:", error);
+        }
+      }
+
+      // Function to display each service as a tag or list item
+      function displayServices(services) {
+        const servicesContainer = document.getElementById("serviceTagsInput");
+        servicesContainer.innerHTML = "";
+
+        services.forEach((service) => {
+          console.log("Service:", services, service);
+          const serviceTag = createTagElement(service.ServiceName, "service"); // Assuming each service has a 'name' property
+          servicesContainer.appendChild(serviceTag);
+        });
+      }
+
+      fetchServices();
+      function setProfileImages() {
+      const storedData = JSON.parse(localStorage.getItem("doc-data"));
+      const userData = storedData?.profile;
+     // Check if ProfileImage data is available
+      if (!userData?.ProfileImage?.data) return;
+
+      // Convert the buffer array to a Uint8Array
+      const bufferArray = new Uint8Array(userData.ProfileImage.data);
+
+      // Convert the Uint8Array to a Blob
+      const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
+
+      // Create an Object URL from the Blob
+      const imageUrl = URL.createObjectURL(blob);
+
+      // Set the image URL to all <img> elements with the class "profileImage"
+      const profileImages = document.querySelectorAll("img.profileImage");
+      profileImages.forEach((img) => {
+        img.src = imageUrl;
+      });
+    }
+   
+      setProfileImages()
+    });
+
+
+  </script>
 </html>
