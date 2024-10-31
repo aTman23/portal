@@ -148,6 +148,32 @@
             servicesContainer.appendChild(serviceItem); 
           });
         }
+
+
+
+        function setProfileImages() {
+      const storedData = JSON.parse(localStorage.getItem("doc-data"));
+      const userData = storedData?.profile;
+      document.getElementById("DocNa").textContent = `${userData?.FirstName} ${userData?.LastName}`
+      if (!userData?.ProfileImage?.data) return;
+
+      // Convert the buffer array to a Uint8Array
+      const bufferArray = new Uint8Array(userData.ProfileImage.data);
+
+      // Convert the Uint8Array to a Blob
+      const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
+
+      // Create an Object URL from the Blob
+      const imageUrl = URL.createObjectURL(blob);
+
+      // Set the image URL to all <img> elements with the class "profileImage"
+      const profileImages = document.querySelectorAll("img.profileImage");
+      profileImages.forEach((img) => {
+        img.src = imageUrl;
+      });
+    }
+   
+      setProfileImages()
       });
     </script>
 
@@ -214,7 +240,7 @@
               >
                 <span class="user-img">
                   <img
-                    class="rounded-circle"
+                    class="rounded-circle profileImage"
                     src="assets/img/doctors/dr.madhurima.jpg"
                     width="31"
                     alt="Dr. Madhurima Mopidevi"
@@ -227,11 +253,11 @@
                     <img
                       src="assets/img/doctors/dr.madhurima.jpg"
                       alt="User Image"
-                      class="avatar-img rounded-circle"
+                      class="avatar-img rounded-circle profileImage"
                     />
                   </div>
                   <div class="user-text">
-                    <h6>Dr. Madhurima Mopidevi</h6>
+                    <h6 id="DocNa">Dr. Madhurima Mopidevi</h6>
                     <p class="text-muted mb-0">Doctor</p>
                   </div>
                 </div>
@@ -283,8 +309,9 @@
                   <div class="doctor-img">
                     <img
                       src="assets/img/doctors/doctor-thumb-02.jpg"
-                      class="img-fluid"
+                      class="img-fluid profileImage"
                       alt="User Image"
+                      style="max-height: 150px; width: auto;"
                     />
                   </div>
                   <div class="doc-info-cont">
@@ -357,8 +384,8 @@
                       <i class="fas fa-video"></i>
                     </a>
                   </div>
-                  <div class="clinic-booking">
-                    <a class="apt-btn" href="../booking.html"
+                  <div class="clinic-booking d-none">
+                    <a class="apt-btn" href="booking.html"
                       >Book Appointment</a
                     >
                   </div>
@@ -627,186 +654,13 @@
 
                 <!-- Reviews Content -->
                 <div role="tabpanel" id="doc_reviews" class="tab-pane fade">
-                  <!-- Review Listing -->
-                  <div class="widget review-listing">
-                    <ul class="comments-list">
-                      <!-- Comment List -->
-                      <li>
-                        <div class="comment">
-                          <img
-                            class="avatar avatar-sm rounded-circle"
-                            alt="User Image"
-                            src="assets/img/patients/patient.jpg"
-                          />
-                          <div class="comment-body">
-                            <div class="meta-data">
-                              <span class="comment-author">Richard Wilson</span>
-                              <span class="comment-date"
-                                >Reviewed 2 Days ago</span
-                              >
-                              <div class="review-count rating">
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star"></i>
-                              </div>
-                            </div>
-                            <p class="recommended">
-                              <i class="far fa-thumbs-up"></i>
-                              I recommend the doctor
-                            </p>
-                            <p class="comment-content">
-                              Lorem ipsum dolor sit amet, consectetur
-                              adipisicing elit, sed do eiusmod tempor incididunt
-                              ut labore et dolore magna aliqua. Ut enim ad minim
-                              veniam, quis nostrud exercitation. Curabitur non
-                              nulla sit amet nisl tempus
-                            </p>
-                            <div class="comment-reply">
-                              <a class="comment-btn" href="#">
-                                <i class="fas fa-reply"></i>
-                                Reply
-                              </a>
-                              <p class="recommend-btn">
-                                <span>Recommend?</span>
-                                <a href="#" class="like-btn">
-                                  <i class="far fa-thumbs-up"></i>
-                                  Yes
-                                </a>
-                                <a href="#" class="dislike-btn">
-                                  <i class="far fa-thumbs-down"></i>
-                                  No
-                                </a>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- Comment Reply -->
-                        <ul class="comments-reply">
-                          <li>
-                            <div class="comment">
-                              <img
-                                class="avatar avatar-sm rounded-circle"
-                                alt="User Image"
-                                src="assets/img/patients/patient1.jpg"
-                              />
-                              <div class="comment-body">
-                                <div class="meta-data">
-                                  <span class="comment-author"
-                                    >Charlene Reed</span
-                                  >
-                                  <span class="comment-date"
-                                    >Reviewed 3 Days ago</span
-                                  >
-                                  <div class="review-count rating">
-                                    <i class="fas fa-star filled"></i>
-                                    <i class="fas fa-star filled"></i>
-                                    <i class="fas fa-star filled"></i>
-                                    <i class="fas fa-star filled"></i>
-                                    <i class="fas fa-star"></i>
-                                  </div>
-                                </div>
-                                <p class="comment-content">
-                                  Lorem ipsum dolor sit amet, consectetur
-                                  adipisicing elit, sed do eiusmod tempor
-                                  incididunt ut labore et dolore magna aliqua.
-                                  Ut enim ad minim veniam. Curabitur non nulla
-                                  sit amet nisl tempus
-                                </p>
-                                <div class="comment-reply">
-                                  <a class="comment-btn" href="#">
-                                    <i class="fas fa-reply"></i>
-                                    Reply
-                                  </a>
-                                  <p class="recommend-btn">
-                                    <span>Recommend?</span>
-                                    <a href="#" class="like-btn">
-                                      <i class="far fa-thumbs-up"></i>
-                                      Yes
-                                    </a>
-                                    <a href="#" class="dislike-btn">
-                                      <i class="far fa-thumbs-down"></i>
-                                      No
-                                    </a>
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                        <!-- /Comment Reply -->
-                      </li>
-                      <!-- /Comment List -->
-
-                      <!-- Comment List -->
-                      <li>
-                        <div class="comment">
-                          <img
-                            class="avatar avatar-sm rounded-circle"
-                            alt="User Image"
-                            src="assets/img/patients/patient2.jpg"
-                          />
-                          <div class="comment-body">
-                            <div class="meta-data">
-                              <span class="comment-author">Travis Trimble</span>
-                              <span class="comment-date"
-                                >Reviewed 4 Days ago</span
-                              >
-                              <div class="review-count rating">
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star filled"></i>
-                                <i class="fas fa-star"></i>
-                              </div>
-                            </div>
-                            <p class="comment-content">
-                              Lorem ipsum dolor sit amet, consectetur
-                              adipisicing elit, sed do eiusmod tempor incididunt
-                              ut labore et dolore magna aliqua. Ut enim ad minim
-                              veniam, quis nostrud exercitation. Curabitur non
-                              nulla sit amet nisl tempus
-                            </p>
-                            <div class="comment-reply">
-                              <a class="comment-btn" href="#">
-                                <i class="fas fa-reply"></i>
-                                Reply
-                              </a>
-                              <p class="recommend-btn">
-                                <span>Recommend?</span>
-                                <a href="#" class="like-btn">
-                                  <i class="far fa-thumbs-up"></i>
-                                  Yes
-                                </a>
-                                <a href="#" class="dislike-btn">
-                                  <i class="far fa-thumbs-down"></i>
-                                  No
-                                </a>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                      <!-- /Comment List -->
-                    </ul>
-
-                    <!-- Show All -->
-                    <div class="all-feedback text-center">
-                      <a href="#" class="btn btn-primary btn-sm">
-                        Show all feedback
-                        <strong>(167)</strong>
-                      </a>
-                    </div>
-                    <!-- /Show All -->
-                  </div>
+              
                   <!-- /Review Listing -->
 
                   <!-- Write Review -->
                   <div class="write-review">
                     <h4>
-                      Write a review for <strong>Dr. Darren Elder</strong>
+                      Write a review
                     </h4>
 
                     <!-- Write Review Form -->

@@ -2,11 +2,11 @@ import express from "express";
 import pool from "../config/db.js";
 import multer from "multer";
 
+
+const upload  = multer();
 const router = express.Router();
 
 // Multer setup for file uploads
-const upload = multer({ storage: multer.memoryStorage() }); // Store files in memory
-
 router.get("/:name", async (req, res) => {
   const psychologistName = req.params.name;
 
@@ -105,6 +105,39 @@ router.get("/:name", async (req, res) => {
   }
 });
 
+
+
+router.get("/user-image/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const connection = await pool.getConnection();
+
+    // Fetch profile image as a buffer from the database
+    const [rows] = await connection.query(
+      "SELECT ProfileImage FROM doc WHERE UserID = ?",
+      [userId]
+    );
+
+    // Check if an image exists for the user
+    if (rows.length === 0 || !rows[0].ProfileImage) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    const profileImageBuffer = rows[0].ProfileImage;
+
+    // Convert the image buffer to a Base64 string
+    const base64Image = profileImageBuffer.toString("base64");
+
+    // Send the Base64 image as JSON (or you could directly send it as an image)
+    res.json({
+      imageUrl: `data:image/jpeg;base64,${base64Image}`, // or change 'jpeg' to 'png' if your images are PNG
+    });
+  } catch (error) {
+    console.error("Error fetching profile image:", error);
+    res.status(500).json({ error: "Failed to fetch profile image" });
+  }
+});
 
 router.get("/d/:id", async (req, res) => {
   const psychologistName = req.params.id;
@@ -207,13 +240,7 @@ router.get("/d/:id", async (req, res) => {
 
 // Route to update doctor profile details
 router.put(
-  "/update-profile/:userId",
-  upload.fields([
-    { name: "profileImage", maxCount: 1 },
-    { name: "clinicImage1", maxCount: 1 },
-    { name: "clinicImage2", maxCount: 1 },
-  ]),
-  async (req, res) => {
+  "/update-profile/:userId", upload.single('profileImage'),async (req, res) => {
     const userId = req.params.userId;
 
     // Extracting fields from request body
@@ -254,14 +281,10 @@ router.put(
         });
     }
 
-    // Prepare images as buffers if provided
-    const userImage = req.files["profileImage"]
-      ? req.files["profileImage"][0].buffer
-      : null;
-    const clinicImages = [
-      req.files["clinicImage1"] ? req.files["clinicImage1"][0].buffer : null,
-      req.files["clinicImage2"] ? req.files["clinicImage2"][0].buffer : null,
-    ];
+    const clinicImages = [null,null];
+    const userImage = req.file ? req.file.buffer : null;
+
+  
 
     const profileQuery = `
         UPDATE doc

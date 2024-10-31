@@ -38,7 +38,34 @@
       
          const userData = storedData?.profile;
         document.getElementById("DocName").textContent = `${userData?.FirstName} ${userData?.LastName}`
+        document.getElementById("DocNa").textContent = `${userData?.FirstName} ${userData?.LastName}`
+
         document.getElementById("AboutMe").textContent = `${userData?.AboutMe}`
+
+        function setProfileImages() {
+      const storedData = JSON.parse(localStorage.getItem("doc-data"));
+      const userData = storedData?.profile;
+     // Check if ProfileImage data is available
+      if (!userData?.ProfileImage?.data) return;
+
+      // Convert the buffer array to a Uint8Array
+      const bufferArray = new Uint8Array(userData.ProfileImage.data);
+
+      // Convert the Uint8Array to a Blob
+      const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
+
+      // Create an Object URL from the Blob
+      const imageUrl = URL.createObjectURL(blob);
+
+      // Set the image URL to all <img> elements with the class "profileImage"
+      const profileImages = document.querySelectorAll("img.profileImage");
+      profileImages.forEach((img) => {
+        img.src = imageUrl;
+      });
+    }
+   
+      setProfileImages()
+
       
       })
       
@@ -58,13 +85,13 @@
                 <span></span>
               </span>
             </a>
-            <a href="index-2.html" class="navbar-brand logo">
+            <a href="#" class="navbar-brand logo">
               <img src="assets/img/logo.png" class="img-fluid" alt="Logo" />
             </a>
           </div>
           <div class="main-menu-wrapper">
             <div class="menu-header">
-              <a href="index-2.html" class="menu-logo">
+              <a href="#" class="menu-logo">
                 <img src="assets/img/logo.png" class="img-fluid" alt="Logo" />
               </a>
               <a id="menu_close" class="menu-close" href="javascript:void(0);">
@@ -107,7 +134,7 @@
               >
                 <span class="user-img">
                   <img
-                    class="rounded-circle"
+                    class="rounded-circle profileImage"
                     src="assets/img/doctors/dr.madhurima.jpg"
                     width="31"
                     alt="Dr. Madhurima Mopidevi"
@@ -120,11 +147,11 @@
                     <img
                       src="assets/img/doctors/dr.madhurima.jpg"
                       alt="User Image"
-                      class="avatar-img rounded-circle"
+                      class="avatar-img rounded-circle profileImage"
                     />
                   </div>
                   <div class="user-text">
-                    <h6>Dr. Madhurima Mopidevi</h6>
+                    <h6 id="DocNa">Dr. Madhurima Mopidevi</h6>
                     <p class="text-muted mb-0">Doctor</p>
                   </div>
                 </div>
@@ -151,7 +178,7 @@
               <nav aria-label="breadcrumb" class="page-breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item">
-                    <a href="index-2.html">Home</a>
+                    <a href="#">Home</a>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
                     Appointments
@@ -179,6 +206,7 @@
                         src="assets/img/doctors/dr.madhurima.jpg"
                         alt="User Image"
                         id="Profile"
+                        class="profileImage"
                       />
                     </a>
                     <div class="profile-det-info">
