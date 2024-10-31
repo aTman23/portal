@@ -50,7 +50,7 @@
         async function fetchPsychologistDetails(id) {
           try {
             const response = await fetch(
-              `http://localhost:5000/doctors/d/${id}`
+              `https://portalserver-sepia.vercel.app/doctors/d/${id}`
             );
             if (response.ok) {
               const data = await response.json();
