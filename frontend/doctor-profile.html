@@ -14,6 +14,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <script src="protect.js"></script>
 
     <!-- Fontawesome CSS -->
     <link
@@ -384,9 +385,9 @@
                       <i class="fas fa-video"></i>
                     </a>
                   </div>
-                  <div class="clinic-booking d-none">
-                    <a class="apt-btn" href="booking.html"
-                      >Book Appointment</a
+                  <div class="clinic-booking" id="shareProfileBtn">
+                    <a class="apt-btn" 
+                      >Share Profile</a
                     >
                   </div>
                 </div>
@@ -947,4 +948,35 @@
   </body>
 
   <!-- doccure/doctor-profile.html  30 Nov 2019 04:12:16 GMT -->
+
+
+  <script>
+    document.getElementById("shareProfileBtn").addEventListener("click", async () => {
+      const storedData = JSON.parse(localStorage.getItem("doc-data"));
+      const userData = storedData?.profile;
+
+      if(!userData.Username){
+        alert("You Dont have username Please add your username in profile settings")
+        window.location.href = "doctor-profile-settings.html";
+      }
+  const profileData = {
+    title: `${userData?.FirstName} ${userData?.LastName} 's Profile ON PsyShell `,
+    text: "Check out my profile profile! and book an Appointment",
+    url: `https://psyshell.help/psychologist#${userData.Username}` // Replace with the actual URL of the patient's profile
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(profileData);
+    } else {
+      alert("Share feature not supported in this browser.");
+      console.log("Share data:", profileData);
+    }
+  } catch (error) {
+    console.error("Error sharing profile:", error);
+    alert("An error occurred while sharing the profile.");
+  }
+});
+
+  </script>
 </html>

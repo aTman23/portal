@@ -1,51 +1,93 @@
-$(document).ready(function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const doctorId = urlParams.get('doctorId'); // Get doctor ID from URL
+// Get URL query parameters
 
-    function generateTimeSlots() {
-        const startTime = new Date();
-        const endTime = new Date(startTime.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days later
 
-        while (startTime <= endTime) {
-            const date = startTime.toISOString().split('T')[0]; // YYYY-MM-DD
-            $('#timeSlots').append(`<h5>${date}</h5><div class="form-group">${createTimeSlots(date)}</div>`);
-            startTime.setDate(startTime.getDate() + 1); // Move to next day
-        }
+// Generate day slots dynamically
+const startDate = new Date();
+const daySlotsContainer = document.getElementById("day-slots");
+const timeIntervals = ["9:00 AM", "10:00 AM", "11:00 AM", "01:00 PM", "02:00 PM", "03:00 PM"];
+const dayDates = []; // Store generated dates to match with time slots later
+
+for (let i = 0; i < 7; i++) {
+  const currentDay = new Date(startDate);
+  currentDay.setDate(startDate.getDate() + i);
+  dayDates.push(currentDay); // Save the date for later use
+
+  const daySlot = document.createElement("li");
+
+  const formattedDate = `${currentDay.getFullYear()}-${String(currentDay.getMonth() + 1).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
+
+  daySlot.innerHTML = `
+    <span>${currentDay.toLocaleString("en-US", { weekday: "short" })}</span>
+    <span class="slot-date">
+      ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", { month: "short" })}
+      <small class="slot-year">${currentDay.getFullYear()}</small>
+    </span>
+  `;
+  
+  // Highlight day if it matches the selected date
+  if (formattedDate === selectedDate) {
+    daySlot.classList.add("active");
+  }
+  
+  daySlotsContainer.appendChild(daySlot);
+}
+
+// Generate time slots dynamically with disabled past slots
+const timeSlotsContainer = document.getElementById("time-slots");
+
+for (let j = 0; j < 7; j++) { // Loop for 7 days
+  const currentDate = dayDates[j];
+  const timeSlotList = document.createElement("li");
+
+  timeIntervals.forEach((time) => {
+    const timeLink = document.createElement("a");
+    timeLink.classList.add("timing");
+    timeLink.href = "#";
+
+    const [hour, period] = time.split(" ");
+    const slotTime = new Date(currentDate);
+    slotTime.setHours(
+      period === "PM" && hour !== "12" ? parseInt(hour) + 12 : parseInt(hour),
+      0,
+      0,
+      0
+    );
+
+    const formattedTime = `${String(slotTime.getHours()).padStart(2, "0")}:${String(slotTime.getMinutes()).padStart(2, "0")}`;
+    const formattedSlotDate = `${slotTime.getFullYear()}-${String(slotTime.getMonth() + 1).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
+
+    // Disable past slots
+    if (slotTime < new Date()) {
+      timeLink.classList.add("disabled");
+      timeLink.setAttribute("aria-disabled", "true");
+      timeLink.style.pointerEvents = "none";
+    } else {
+      // Add event listener for active slots
+      timeLink.addEventListener("click", () => {
+        const dateStr = formattedSlotDate;
+        const timeStr = formattedTime;
+        
+        // Construct new query parameters without duplicates
+        const newSearchParams = new URLSearchParams(window.location.search);
+        newSearchParams.set("date", dateStr);
+        newSearchParams.set("time", timeStr);
+      
+        // Update the URL search string
+        window.location.search = newSearchParams.toString();
+      });
+      
     }
 
-    function createTimeSlots(date) {
-        let slots = '';
-        for (let hour = 9; hour < 17; hour++) { // Assuming working hours from 9 AM to 5 PM
-            for (let minute = 0; minute < 60; minute += 30) { // Half-hour slots
-                const time = `${hour}:${minute === 0 ? '00' : minute}`;
-                slots += `
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="${date}" value="${time}" id="${date}-${time}">
-                        <label class="form-check-label" for="${date}-${time}">${time}</label>
-                    </div>`;
-            }
-        }
-        return slots;
+    // Highlight the time slot if it matches selected date and time
+    if (formattedSlotDate === selectedDate && formattedTime === selectedTime) {
+      timeLink.classList.add("active");
     }
 
-    generateTimeSlots(); // Call function to generate time slots
+    timeLink.innerHTML = `<span>${hour}</span> <span>${period}</span>`;
+    timeSlotList.appendChild(timeLink);
+  });
 
-    $('#proceedToPay').click(function() {
-        const selectedSlot = $('input[type=radio]:checked');
-        if (selectedSlot.length === 0) {
-            alert('Please select a time slot.');
-            return;
-        }
 
-        const appointmentDetails = {
-            doctorId: doctorId,
-            patientId: /* Get patient ID from session or API */, // Implement logic to get patient ID
-            date: selectedSlot.attr('name'),
-            time: selectedSlot.val()
-        };
 
-        // Redirect to checkout page with appointment details in local storage
-        localStorage.setItem('appointmentDetails', JSON.stringify(appointmentDetails));
-        window.location.href = 'checkout.html';
-    });
-});
+  timeSlotsContainer.appendChild(timeSlotList);
+}

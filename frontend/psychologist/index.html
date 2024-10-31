@@ -42,6 +42,8 @@
               const data = await response.json();
               displayServices(data.data.services);
               displaySpecializations(data.data.specializations);
+              
+              setProfileImages(data.data.profile.ProfileImage)
 
               Object.keys(data.data.profile).forEach((key) => {
                 const elements = document.querySelectorAll(`.${key}`);
@@ -90,6 +92,10 @@
 
                 eduContainer.appendChild(listItem);
               });
+
+
+              document.querySelector("a.apt-btn").href = `../booking.html?doctorId=${data.data.profile.UserID}&docName=${data.data.profile?.FirstName} ${data.data.profile?.LastName}&Loc=${data.data.profile.ClinicName+"" +data.data.profile.ClinicAddress}`
+
             } else {
               document.getElementById(
                 "profile"
@@ -124,7 +130,7 @@
           return listItem;
         }
 
-  
+
         function displayServices(services) {
           const servicesContainer = document.getElementById("servicesInput");
           servicesContainer.innerHTML = ""; 
@@ -135,7 +141,33 @@
             servicesContainer.appendChild(serviceItem); 
           });
         }
+
+        function setProfileImages(ProfileImage) {
+      if (ProfileImage?.data) return;
+
+      // Convert the buffer array to a Uint8Array
+      const bufferArray = new Uint8Array(ProfileImage?.data);
+
+      // Convert the Uint8Array to a Blob
+      const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
+
+      // Create an Object URL from the Blob
+      const imageUrl = URL.createObjectURL(blob);
+
+      // Set the image URL to all <img> elements with the class "profileImage"
+      const profileImages = document.querySelectorAll("img.profileImage");
+      profileImages.forEach((img) => {
+        img.src = imageUrl;
       });
+    }
+   
+    
+
+
+      });
+
+
+   
     </script>
   </head>
   <body>

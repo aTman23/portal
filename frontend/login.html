@@ -80,6 +80,8 @@
 <script src="assets/js/bootstrap.min.js"></script>
 
 <script>
+
+    localStorage.clear()
 document.getElementById('loginForm').addEventListener('submit', async (event) => {
 event.preventDefault();
 const email = document.getElementById('email').value.trim();
