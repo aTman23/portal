@@ -1,120 +1,295 @@
-import express from 'express';
-import pool from '../config/db.js';
-import nodemailer from 'nodemailer'; // for email notifications
-import  generateGoogleMeetLink  from '../utils/meet.js'; // a utility function for generating Google Meet links
+import express from "express";
+import pool from "../config/db.js";
+import nodemailer from "nodemailer"; // for email notifications
+import generateGoogleMeetLink from "../utils/meet.js"; // a utility function for generating Google Meet links
 
 const router = express.Router();
 
-// Setup nodemailer for email notifications
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // or other email service provider
-    auth: {
-        user: 'your-email@gmail.com', // replace with your email
-        pass: 'your-email-password' // replace with your email password
-    }
+  service: "gmail",
+  auth: {
+    user: process.env.Email,
+    pass: process.env.Password,
+  },
 });
 
-// Fetch Appointments for a Doctor
-router.get('/doctor/:doctorId', async (req, res) => {
+router.get("/data/:doctorId", async (req, res) => {
+  const { doctorId } = req.params;
+
+  try {
+    const today = new Date();
+    const todayDate = today.toISOString().slice(0, 10);
+    const todayTime = today.toISOString().slice(11, 19);
+
+    // Fetch today's appointments
+    const [todayAppointments] = await pool.query(
+      "SELECT * FROM appointments WHERE DoctorID = ? AND AppointmentDate = ?",
+      [doctorId, todayDate]
+    );
+
+    // Fetch upcoming appointments
+    const [upcomingAppointments] = await pool.query(
+      "SELECT * FROM appointments WHERE DoctorID = ? AND AppointmentDate > ?",
+      [doctorId, todayDate]
+    );
+
+    // Fetch past appointments
+    const [pastAppointments] = await pool.query(
+      "SELECT * FROM appointments WHERE DoctorID = ? AND AppointmentDate < ?",
+      [doctorId, todayDate]
+    );
+
+    // Get total unique patients
+    const [uniquePatients] = await pool.query(
+      "SELECT DISTINCT PatientID FROM appointments WHERE DoctorID = ?",
+      [doctorId]
+    );
+
+    // Get total appointments today
+    const [totalAppointmentsToday] = await pool.query(
+      "SELECT COUNT(*) AS totalAppointmentsToday FROM appointments WHERE DoctorID = ? AND AppointmentDate = ?",
+      [doctorId, todayDate]
+    );
+
+    // Get total unique patients today
+    const [uniquePatientsToday] = await pool.query(
+      "SELECT DISTINCT PatientID FROM appointments WHERE DoctorID = ? AND AppointmentDate = ?",
+      [doctorId, todayDate]
+    );
+
+    // Fetch patient details for unique patients
+    const patientIds = uniquePatients.map((patient) => patient.PatientID);
+
+    let patientDetails = [];
+    if (patientIds.length > 0) {
+      const placeholders = patientIds.map(() => "?").join(","); // Create placeholders
+      const [patientDetailsResult] = await pool.query(
+        `SELECT * FROM patients WHERE PatientID IN (${placeholders})`,
+        [...patientIds] // Spread the patient IDs as individual parameters
+      );
+      patientDetails = patientDetailsResult;
+    }
+
+    // Fetch patient details for unique patients today
+    const patientIdsToday = uniquePatientsToday.map(
+      (patient) => patient.PatientID
+    );
+    let patientDetailsToday = [];
+    if (patientIdsToday.length > 0) {
+      const placeholdersToday = patientIdsToday.map(() => "?").join(","); // Create placeholders
+      const [patientDetailsTodayResult] = await pool.query(
+        `SELECT * FROM patients WHERE PatientID IN (${placeholdersToday})`,
+        [...patientIdsToday] // Spread the patient IDs as individual parameters
+      );
+      patientDetailsToday = patientDetailsTodayResult;
+    }
+
+    return res.status(200).json({
+      todayAppointments,
+      upcomingAppointments,
+      pastAppointments,
+      totalUniquePatients: uniquePatients.length,
+      totalAppointmentsToday: totalAppointmentsToday[0].totalAppointmentsToday,
+      totalUniquePatientsToday: uniquePatientsToday.length,
+      patientDetails,
+      patientDetailsToday,
+    });
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return res
+      .status(500)
+      .json({ message: "Unable to fetch appointments at this time." });
+  }
+});
+
+
+router.get("/patients/:doctorId", async (req, res) => {
     const { doctorId } = req.params;
-
+  
     try {
-        const [appointments] = await pool.query('SELECT * FROM appointments WHERE DoctorID = ?', [doctorId]);
-        return res.status(200).json({ appointments });
+      // Get unique patient IDs for the given doctor
+      const [uniquePatients] = await pool.query(
+        "SELECT DISTINCT PatientID FROM appointments WHERE DoctorID = ?",
+        [doctorId]
+      );
+  
+      // Extract patient IDs from the result
+      const patientIds = uniquePatients.map((patient) => patient.PatientID);
+  
+      let patientDetails = [];
+      if (patientIds.length > 0) {
+        const placeholders = patientIds.map(() => "?").join(",");
+        const [patientDetailsResult] = await pool.query(
+          `SELECT * FROM patients WHERE PatientID IN (${placeholders})`,
+          [...patientIds] 
+        );
+        patientDetails = patientDetailsResult;
+      }
+  
+      return res.status(200).json({
+        totalUniquePatients: patientDetails.length,
+        patientDetails,
+      });
     } catch (error) {
-        console.error('Error fetching appointments:', error);
-        return res.status(500).json({ message: 'Unable to fetch appointments at this time.' });
+      console.error("Error fetching unique patients:", error);
+      return res
+        .status(500)
+        .json({ message: "Unable to fetch unique patient details at this time." });
     }
+  });
+  
+
+  router.get("/appointments/:doctorId", async (req, res) => {
+    const { doctorId } = req.params;
+  
+    try {
+      // Fetch appointments along with patient details for the given doctor
+      const [appointments] = await pool.query(
+        `SELECT a.*, p.PatientID, p.Name, p.Mobile, p.Age, p.Gender, p.Email 
+         FROM appointments AS a
+         JOIN patients AS p ON a.PatientID = p.PatientID
+         WHERE a.DoctorID = ?`,
+        [doctorId]
+      );
+  
+      return res.status(200).json({
+        totalAppointments: appointments.length,
+        appointments,
+      });
+    } catch (error) {
+      console.error("Error fetching appointments with patient details:", error);
+      return res
+        .status(500)
+        .json({ message: "Unable to fetch appointment details at this time." });
+    }
+  });
+  
+
+router.get("/patient/:patientId", async (req, res) => {
+  const { patientId } = req.params;
+
+  try {
+    const [appointments] = await pool.query(
+      "SELECT * FROM appointments WHERE PatientID = ?",
+      [patientId]
+    );
+    return res.status(200).json({ appointments });
+  } catch (error) {
+    console.error("Error fetching patient appointments:", error);
+    return res
+      .status(500)
+      .json({ message: "Unable to fetch patient appointments at this time." });
+  }
 });
 
-// Fetch Appointments for a Patient
-router.get('/patient/:patientId', async (req, res) => {
-    const { patientId } = req.params;
+router.post("/book", async (req, res) => {
+  const { doctorId, date, time, patientEmail, patientName, Mobile, Purpose } =
+    req.body;
 
-    try {
-        const [appointments] = await pool.query('SELECT * FROM appointments WHERE PatientID = ?', [patientId]);
-        return res.status(200).json({ appointments });
-    } catch (error) {
-        console.error('Error fetching patient appointments:', error);
-        return res.status(500).json({ message: 'Unable to fetch patient appointments at this time.' });
+  if (!doctorId || !date || !time || !patientEmail) {
+    return res
+      .status(400)
+      .json({ message: "All fields are required, including patient email." });
+  }
+
+  try {
+    let patientId;
+    const [existingPatients] = await pool.query(
+      "SELECT PatientID FROM patients WHERE Email = ?",
+      [patientEmail]
+    );
+
+    if (existingPatients.length > 0) {
+      patientId = existingPatients[0].PatientID;
+    } else {
+      const [newPatient] = await pool.query(
+        "INSERT INTO patients (Email,Name,Mobile)  VALUES (?,?,?)",
+        [patientEmail, patientName, Mobile]
+      );
+
+      if (newPatient.affectedRows === 0) {
+        return res
+          .status(500)
+          .json({ message: "Failed to create a new patient record." });
+      }
+
+      patientId = newPatient.insertId;
     }
-});
 
-// Book Appointment Route
-router.post('/book', async (req, res) => {
-    const { doctorId, patientId, date, time, patientEmail } = req.body; 
+    const [existingAppointments] = await pool.query(
+      'SELECT * FROM appointments WHERE DoctorID = ? AND AppointmentDate = ? AND AppointmentTime = ? AND Status = "booked"',
+      [doctorId, date, time]
+    );
 
-    if (!doctorId || !patientId || !date || !time || !patientEmail) {
-        return res.status(400).json({ message: 'All fields are required, including patient email.' });
+    if (existingAppointments.length > 0) {
+      return res.status(400).json({ message: "Timeslot is already booked." });
     }
 
-    try {
-        // Check if the timeslot is available
-        const [existingAppointments] = await pool.query(
-            'SELECT * FROM appointments WHERE DoctorID = ? AND AppointmentDate = ? AND AppointmentTime = ? AND Status = "booked"',
-            [doctorId, date, time]
-        );
+    const googleMeetLink = generateGoogleMeetLink();
 
-        if (existingAppointments.length > 0) {
-            return res.status(400).json({ message: 'Timeslot is already booked.' });
-        }
+    const [result] = await pool.query(
+      'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime, Status, MeetLink,Purpose) VALUES (?, ?, ?, ?, "booked", ?,?)',
+      [doctorId, patientId, date, time, googleMeetLink, Purpose]
+    );
 
-        // Generate Google Meet link
-        const googleMeetLink = generateGoogleMeetLink();
-
-        // Insert the appointment
-        const [result] = await pool.query(
-            'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime, Status, MeetLink) VALUES (?, ?, ?, ?, "booked", ?)',
-            [doctorId, patientId, date, time, googleMeetLink]
-        );
-
-        if (result.affectedRows === 0) {
-            return res.status(500).json({ message: 'Failed to book the appointment.' });
-        }
-
-        // Send an email notification with the Google Meet link
-        const mailOptions = {
-            from: 'your-email@gmail.com',
-            to: patientEmail, // Send email to the provided patient email
-            subject: 'Appointment Confirmation',
-            text: `Your appointment is confirmed. Here is your Google Meet link: ${googleMeetLink}`
-        };
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error sending email:', error);
-                // Do not return an error response here since the booking succeeded
-            } else {
-                console.log('Email sent:', info.response);
-            }
-        });
-
-        return res.status(200).json({ message: 'Appointment booked successfully.' });
-    } catch (error) {
-        console.error('Error booking appointment:', error);
-        return res.status(500).json({ message: 'Server error while booking appointment.' });
+    if (result.affectedRows === 0) {
+      return res
+        .status(500)
+        .json({ message: "Failed to book the appointment." });
     }
+
+    const mailOptions = {
+      from: process.env.Email,
+      to: patientEmail,
+      subject: "Appointment Confirmation",
+      text: `Your appointment is confirmed. Here is your Google Meet link: ${googleMeetLink}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Appointment booked successfully." });
+  } catch (error) {
+    console.error("Error booking appointment:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error while booking appointment." });
+  }
 });
 
 // Update Appointment Status
-router.put('/:appointmentId', async (req, res) => {
-    const { appointmentId } = req.params;
-    const { status } = req.body;
+router.put("/status/:appointmentId", async (req, res) => {
+  const { appointmentId } = req.params;
+  const { status } = req.body;
 
-    if (!['accepted', 'declined'].includes(status)) {
-        return res.status(400).json({ message: 'Invalid status value.' });
-    }
+  if (!["accepted", "declined"].includes(status)) {
+    return res.status(400).json({ message: "Invalid status value." });
+  }
 
-    try {
-        const [result] = await pool.query('UPDATE appointments SET Status = ? WHERE AppointmentID = ?', [status, appointmentId]);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Appointment not found.' });
-        }
-        return res.status(200).json({ message: 'Appointment status updated successfully.' });
-    } catch (error) {
-        console.error('Error updating appointment status:', error);
-        return res.status(500).json({ message: 'Server error while updating appointment status.' });
+  try {
+    const [result] = await pool.query(
+      "UPDATE appointments SET Status = ? WHERE AppointmentID = ?",
+      [status, appointmentId]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Appointment not found." });
     }
+    return res
+      .status(200)
+      .json({ message: "Appointment status updated successfully." });
+  } catch (error) {
+    console.error("Error updating appointment status:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error while updating appointment status." });
+  }
 });
 
 export default router;
