@@ -20,7 +20,7 @@
 <a href="#" id="mobile_btn">
 <span class="bar-icon"><span></span><span></span><span></span></span>
 </a>
-<a href="index-2.html" class="navbar-brand logo">
+<a href="#" class="navbar-brand logo">
 <img src="assets/img/logo.png" alt="Logo" />
 </a>
 </div>
@@ -91,7 +91,7 @@ return;
 }
 
 try {
-const response = await fetch('http://localhost:5000/login', {
+const response = await fetch('http://localhost:5000/auth/login', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({ email, password }),
@@ -99,7 +99,7 @@ body: JSON.stringify({ email, password }),
 
 const result = await response.json();
 if (response.ok) {
-alert('Login successful!');
+localStorage.setItem('doc-data', JSON.stringify(result.data));
 window.location.replace('doctor-dashboard.html');
 } else {
 document.getElementById('loginErrorMessage').innerText = result.message;

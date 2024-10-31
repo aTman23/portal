@@ -12,9 +12,72 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        const [rows] = await pool.query('SELECT * FROM doc WHERE Email = ?', [email]);
-        if (rows.length > 0 && rows[0].Password === password) {
-            return res.status(200).json({ message: 'Login successful' });
+        const [userRows] = await pool.query('SELECT * FROM doc WHERE Email = ?', [email]);
+        console.log(userRows)
+        if (userRows.length > 0 && userRows[0].Password === password) {
+            const profileQuery = `
+            SELECT 
+                d.*,
+                e.Degree,
+                e.CollegeInstitute,
+                e.YearOfCompletion,
+                x.HospitalName,
+                x.FromDate,
+                x.ToDate,
+                x.Designation,
+                s.ServiceName,
+                sp.SpecializationName
+            FROM 
+                doc d
+            LEFT JOIN 
+                education e ON d.UserID = e.UserID
+            LEFT JOIN 
+                experience x ON d.UserID = x.UserID
+            LEFT JOIN 
+                doctor_services s ON d.UserID = s.DoctorID
+            LEFT JOIN 
+                doctor_specializations sp ON d.UserID = sp.DoctorID
+            WHERE 
+                d.UserID = ?
+            `;
+    
+            const [profileRows] = await pool.query(profileQuery, [userRows[0].UserID]);
+    
+            const result = {
+                profile: profileRows[0],
+                education: [],
+                experience: [],
+                services: [],
+                specializations: [],
+            };
+    
+            if (profileRows.length > 0) {
+                profileRows.forEach((row) => {
+                    if (row.Degree) {
+                        result.education.push({
+                            Degree: row.Degree,
+                            CollegeInstitute: row.CollegeInstitute,
+                            YearOfCompletion: row.YearOfCompletion,
+                        });
+                    }
+                    if (row.HospitalName) {
+                        result.experience.push({
+                            HospitalName: row.HospitalName,
+                            FromDate: row.FromDate,
+                            ToDate: row.ToDate,
+                            Designation: row.Designation,
+                        });
+                    }
+                    if (row.ServiceName) {
+                        result.services.push(row.ServiceName);
+                    }
+                    if (row.SpecializationName) {
+                        result.specializations.push(row.SpecializationName);
+                    }
+                });
+            }
+    
+            return res.json({ message: 'Login successful', data: result });
         } else {
             return res.status(401).json({ message: 'Invalid email or password.' });
         }
@@ -22,6 +85,7 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ message: 'Server error.' });
     }
 });
+
 
 // Doctor Registration Route
 router.post('/doctor-register', [
@@ -42,6 +106,28 @@ router.post('/doctor-register', [
         return res.status(201).json({ message: 'Registration successful.' });
     } catch (error) {
         return res.status(500).json({ message: 'Server error during registration.' });
+    }
+});
+
+
+router.post('/updatepassword', async (req, res) => {
+    const { oldpassword, newpassword, email } = req.body;
+    console.log(oldpassword,newpassword,email)
+
+    try {
+        // Check if the old password matches
+        const [user] = await pool.query('SELECT Password FROM doc WHERE Email = ?', [email]);
+        console.log(user)
+        if (!user || user[0].Password !== oldpassword) {
+            return res.status(400).json({ message: 'Old password is incorrect' });
+        }
+
+        // Update the password
+        await pool.query('UPDATE doc SET Password = ? WHERE Email = ?', [newpassword, email]);
+        res.status(200).json({ message: 'Password updated successfully' });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating password', error });
     }
 });
 
