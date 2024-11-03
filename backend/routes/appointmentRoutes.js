@@ -224,8 +224,16 @@ router.post("/book", async (req, res) => {
     if (existingAppointments.length > 0) {
       return res.status(400).json({ message: "Timeslot is already booked." });
     }
+    const [doctordetails] = await pool.query(
+      'SELECT Email FROM doc WHERE UserID = ?',
+      [doctorId]
+    );
+    const doctorEmail = doctordetails[0].Email;
 
-    const googleMeetLink = generateGoogleMeetLink();
+    const datetimeString = `${date}T${time}`; 
+
+    
+    const googleMeetLink = await generateGoogleMeetLink(patientEmail,doctorEmail,Purpose,datetimeString) || "https://meet.google.com/new";
 
     const [result] = await pool.query(
       'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime, Status, MeetLink,Purpose) VALUES (?, ?, ?, ?, "booked", ?,?)',
