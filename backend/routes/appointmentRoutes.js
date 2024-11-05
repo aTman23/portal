@@ -228,6 +228,7 @@ router.post("/book", async (req, res) => {
       'SELECT Email FROM doc WHERE UserID = ?',
       [doctorId]
     );
+    console.log(doctordetails,doctordetails[0].Email)
     const doctorEmail = doctordetails[0].Email;
 
     const datetimeString = `${date}T${time}`; 

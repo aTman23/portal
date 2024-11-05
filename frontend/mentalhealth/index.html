@@ -143,18 +143,13 @@
         }
 
         function setProfileImages(ProfileImage) {
-      if (ProfileImage?.data) return;
+      if (!ProfileImage?.data) return;
 
-      // Convert the buffer array to a Uint8Array
       const bufferArray = new Uint8Array(ProfileImage?.data);
 
-      // Convert the Uint8Array to a Blob
-      const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
+      const blob = new Blob([bufferArray], { type: "image/jpeg" }); 
 
-      // Create an Object URL from the Blob
       const imageUrl = URL.createObjectURL(blob);
-
-      // Set the image URL to all <img> elements with the class "profileImage"
       const profileImages = document.querySelectorAll("img.profileImage");
       profileImages.forEach((img) => {
         img.src = imageUrl;
@@ -189,7 +184,7 @@
                   <div class="doctor-img">
                     <img
                       src="../assets/img/doctors/doctor-thumb-02.jpg"
-                      class="img-fluid"
+                      class="img-fluid profileImage"
                       alt="User Image"
                     />
                   </div>
@@ -201,7 +196,7 @@
                     <p class="doc-department">
                       <img
                         src="../assets/img/specialities/specialities-05.png"
-                        class="img-fluid"
+                        class="img-fluid profileImage"
                         alt="Speciality"
                       />Psychologist
                     </p>
@@ -214,7 +209,7 @@
                       <span class="d-inline-block average-rating">(35)</span>
                     </div>
                     <div class="clinic-details">
-                      <p class="doc-location">
+                      <p class="doc-location d-none">
                         <i class="fas fa-map-marker-alt"></i>
                         <span class="ClinicAddress"> </span>
 
@@ -239,7 +234,7 @@
                       </li>
                     </ul>
                   </div>
-                  <div class="doctor-action">
+                  <div class="doctor-action d-none">
                     <a href="javascript:void(0)" class="btn btn-white fav-btn">
                       <i class="far fa-bookmark"></i>
                     </a>
