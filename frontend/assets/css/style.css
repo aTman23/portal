@@ -1936,7 +1936,41 @@ button.bg-danger:hover {
 	line-height: 85px;
 	padding: 0 10px;
 }
-
+.contact-info {
+	display: flex;
+	align-items: center;
+	margin-right: 20px;
+  }
+  
+  .contact-details {
+	text-align: right;
+	line-height: 1.4;
+  }
+  
+  .contact-email, 
+  .contact-phone {
+	color: #272b41;
+	font-size: 14px;
+	font-weight: 500;
+	display: block;
+  }
+  
+  .contact-email:hover {
+	color: #20c0f3;
+	text-decoration: none;
+  }
+  
+  .contact-details i {
+	color: #20c0f3;
+	margin-right: 5px;
+  }
+  
+  @media (max-width: 991px) {
+	.contact-info {
+	  display: none;
+	}
+  }
+  
 /*-----------------
 	12. Mobile Menu
 -----------------------*/
