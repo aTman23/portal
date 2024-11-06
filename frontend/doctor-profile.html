@@ -217,7 +217,7 @@
                 <a href="doctor-profile.html">My Profile</a>
               </li>
               <li class="login-link">
-                <a href="login.html">Login / Signup</a>
+                <!-- <a href="login.html">Login / Signup</a> -->
               </li>
             </ul>
           </div>
@@ -951,14 +951,18 @@
 
 
   <script>
-    document.getElementById("shareProfileBtn").addEventListener("click", async () => {
-      const storedData = JSON.parse(localStorage.getItem("doc-data"));
-      const userData = storedData?.profile;
+   document.getElementById("shareProfileBtn").addEventListener("click", async () => {
+  const storedData = JSON.parse(localStorage.getItem("doc-data"));
+  const userData = storedData?.profile;
+  
+  if(!userData.Username){
+    alert("You Dont have username Please add your username in profile settings")
+    window.location.href = "doctor-profile-settings.html";
+    return;
+  }
 
-      if(!userData.Username){
-        alert("You Dont have username Please add your username in profile settings")
-        window.location.href = "doctor-profile-settings.html";
-      }
+  const specialization = userData.specialization_name?.toLowerCase() || 'psychologist';
+
   const profileData = {
     title: `${userData?.FirstName} ${userData?.LastName} 's Profile ON PsyShell `,
     text: "Check out my profile profile! and book an Appointment",
@@ -977,6 +981,7 @@
     alert("An error occurred while sharing the profile.");
   }
 });
+
 
   </script>
 </html>
