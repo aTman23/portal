@@ -50,7 +50,34 @@ $('#custom_price').on('change', function() {
     localStorage.setItem('doctorPrice', newPrice);
 });
 
+// UPI validation function
+
+function validateUpiId(upild) {
+
+	const upiregex = /^[\w\.\-_]{3,}@[a-zA-Z]{3,}$/;
 	
+	return upiRegex.test(upild);
+	
+	}
+	
+	// Add to form submission handler
+	
+	const upiId = document.getElementById('upiId').value;
+	
+	if (!validateUpiId(upiId)) {
+	
+	alert('Please enter a valid UPI ID');
+	
+	return;
+	
+	}
+	
+	formData.append('upiId', upiId);
+
+	if (response.ok) {
+		localStorage.setItem("doc-data", JSON.stringify(data.data));
+		// The UPI ID is now stored in localStorage within the profile data
+	  }
 	// Education Add More
 	
     $(".education-info").on('click','.trash', function () {

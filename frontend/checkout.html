@@ -116,7 +116,48 @@
             alert("An error occurred while booking the appointment.");
           }
         }
+        
+    // Get doctor's CustomPrice from localStorage
+    const doctorData = JSON.parse(localStorage.getItem('doc-data'));
+    const customPricePerHour = doctorData?.profile?.customPricePerHour || '0';
+
+    // Update the consultation fee and total in the booking summary
+    document.querySelector('.booking-fee li span').textContent = `₹${customPricePerHour}`;
+    document.querySelector('.total-cost').textContent = `₹${customPricePerHour}`;
       });
+    document.addEventListener('DOMContentLoaded', () => {
+  // Get doctor's UPI details
+  const doctorData = JSON.parse(localStorage.getItem('doc-data'));
+  const doctorUpiId = doctorData?.profile?.upiId;
+  
+  // Setup payment method handling
+  const upiSection = document.getElementById('upiPaymentDetails');
+  const upiDisplay = document.getElementById('doctorUpiId');
+  const copyButton = document.getElementById('copyUpiBtn');
+
+  // Display UPI ID
+  if (doctorUpiId) {
+    upiDisplay.textContent = doctorUpiId;
+  }
+
+  // Payment method selection
+  document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      upiSection.style.display = e.target.value === 'upi' ? 'block' : 'none';
+    });
+  });
+
+  // Copy UPI ID functionality
+  copyButton.addEventListener('click', () => {
+    navigator.clipboard.writeText(doctorUpiId).then(() => {
+      copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(() => {
+        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy UPI ID';
+      }, 2000);
+    });
+  });
+});
+
     </script>
   </head>
   <body>
@@ -263,11 +304,11 @@
 
                     <!-- Credit Card Payment -->
                     <div class="payment-list">
-                      <label class="payment-radio credit-card-option">
+                      <!-- <label class="payment-radio credit-card-option">
                         <input type="radio" name="radio" checked />
                         <span class="checkmark"></span>
                         Pay After Connecting
-                      </label>
+                      </label> -->
                       <div class="row d-none">
                         <div class="col-md-6">
                           <div class="form-group card-label">
@@ -321,6 +362,29 @@
                       </div>
                     </div>
                     <!-- /Credit Card Payment -->
+<!-- Add this in the payment-widget section -->
+<div class="payment-list">
+  <label class="payment-radio upi-option">
+    <input type="radio" name="paymentMethod" value="upi" />
+    <span class="checkmark"></span>
+    Pay via UPI
+  </label>
+  <div id="upiPaymentDetails" class="upi-payment-section" style="display: none;">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label>Pay to UPI ID:</label>
+          <div class="upi-details">
+            <div class="upi-id" id="doctorUpiId"></div>
+            <button class="btn btn-sm btn-copy" id="copyUpiBtn">
+              <i class="fas fa-copy"></i> Copy UPI ID
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
                     <!-- Paypal Payment -->
                     <!-- <div class="payment-list">
@@ -398,8 +462,8 @@
                       </ul>
                       <ul class="booking-fee">
                         <li>Consulting Fee <span>₹___</span></li>
-                        <li>Booking Fee <span>₹___</span></li>
-                        <li>Video Call <span>₹___</span></li>
+                        <!-- <li>Booking Fee <span>₹___</span></li>
+                        <li>Video Call <span>₹___</span></li> -->
                       </ul>
                       <div class="booking-total">
                         <ul class="booking-total-list">

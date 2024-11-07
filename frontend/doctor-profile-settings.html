@@ -84,18 +84,17 @@
             </ul>
           </div>
           <ul class="nav header-navbar-rht">
-            
-  <li class="nav-item contact-info">
-    <div class="contact-details">
-      <a href="mailto:contact@psyshell.help" class="contact-email">
-        <i class="fas fa-envelope"></i> contact@psyshell.help
-      </a>
-      <div class="contact-phone">
-        <i class="fas fa-phone-alt"></i> +91 9121422554
-      </div>
-    </div>
-  </li>
-  
+            <li class="nav-item contact-info">
+              <div class="contact-details">
+                <a href="mailto:contact@psyshell.help" class="contact-email">
+                  <i class="fas fa-envelope"></i> contact@psyshell.help
+                </a>
+                <div class="contact-phone">
+                  <i class="fas fa-phone-alt"></i> +91 9121422554
+                </div>
+              </div>
+            </li>
+
             <!-- User Menu -->
             <li class="nav-item dropdown has-arrow logged-item">
               <a
@@ -109,7 +108,6 @@
                     src="assets/img/doctors/doctor-thumb-02.jpg"
                     width="31"
                     alt="Darren Elder"
-
                   />
                 </span>
               </a>
@@ -568,13 +566,17 @@
                 <!-- UPI Details -->
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">UPI ID</h4>
+                    <h4 class="card-title">UPI Details</h4>
                     <div class="form-group">
-                      <input type="text" class="form-control" />
+                    <label>UPI ID <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="upiId" id="upiId" placeholder="yourname@bankname"/>
+                    <small class="form-text text-muted">  This UPI ID will be used for receiving payments</small>  
                     </div>
                   </div>
                 </div>
-
+                
+                
+                
                 <!-- Services and Specialization -->
 
                 <!-- /Services and Specialization -->
@@ -734,7 +736,7 @@
                     </div>
                   </div>
                 </div>
-
+              
                 <!-- /Services and Specialization -->
 
                 <!-- Awards -->
@@ -925,12 +927,9 @@
             if (field.type === "radio" || field.type === "checkbox") {
               field.checked = field.value === storedData.profile[key];
             } else {
-
-              if(key!== "ProfileImage"){
+              if (key !== "ProfileImage") {
                 field.value = storedData.profile[key];
-
               }
-
             }
           }
         });
@@ -941,7 +940,7 @@
         .getElementById("profileImageUpload")
         .addEventListener("change", function () {
           const file = this.files[0];
-          if (file && file.size <= 100 * 1024 ) {
+          if (file && file.size <= 100 * 1024) {
             const reader = new FileReader();
             reader.onload = function (e) {
               document.getElementById("profilePreview").src = e.target.result;
@@ -1196,30 +1195,28 @@
 
       fetchServices();
       function setProfileImages() {
-      const storedData = JSON.parse(localStorage.getItem("doc-data"));
-      const userData = storedData?.profile;
-     // Check if ProfileImage data is available
-      if (!userData?.ProfileImage?.data) return;
+        const storedData = JSON.parse(localStorage.getItem("doc-data"));
+        const userData = storedData?.profile;
+        // Check if ProfileImage data is available
+        if (!userData?.ProfileImage?.data) return;
 
-      // Convert the buffer array to a Uint8Array
-      const bufferArray = new Uint8Array(userData.ProfileImage.data);
+        // Convert the buffer array to a Uint8Array
+        const bufferArray = new Uint8Array(userData.ProfileImage.data);
 
-      // Convert the Uint8Array to a Blob
-      const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
+        // Convert the Uint8Array to a Blob
+        const blob = new Blob([bufferArray], { type: "image/jpeg" }); // Use "image/png" if your image is PNG
 
-      // Create an Object URL from the Blob
-      const imageUrl = URL.createObjectURL(blob);
+        // Create an Object URL from the Blob
+        const imageUrl = URL.createObjectURL(blob);
 
-      // Set the image URL to all <img> elements with the class "profileImage"
-      const profileImages = document.querySelectorAll("img.profileImage");
-      profileImages.forEach((img) => {
-        img.src = imageUrl;
-      });
-    }
-   
-      setProfileImages()
+        // Set the image URL to all <img> elements with the class "profileImage"
+        const profileImages = document.querySelectorAll("img.profileImage");
+        profileImages.forEach((img) => {
+          img.src = imageUrl;
+        });
+      }
+
+      setProfileImages();
     });
-
-
   </script>
 </html>

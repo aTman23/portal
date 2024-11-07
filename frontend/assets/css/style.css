@@ -3787,6 +3787,41 @@ html.menu-opened body {
     float: right;
 }
 
+.upi-payment-section {
+	padding: 15px;
+	background: #f8f9fa;
+	border-radius: 5px;
+	margin-top: 10px;
+  }
+  
+  .upi-details {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 10px;
+  }
+  
+  .upi-id {
+	padding: 8px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 16px;
+	font-weight: 500;
+  }
+  
+  .btn-copy {
+	padding: 5px 10px;
+	background: #20c0f3;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+  }
+  
+  .btn-copy:hover {
+	background: #1ba8d8;
+  }
+  
 /*-----------------
 	20. Booking Success
 -----------------------*/
