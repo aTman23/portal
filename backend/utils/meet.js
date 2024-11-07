@@ -1,11 +1,9 @@
 import fs from "fs/promises";
-import path from "path";
 import { google } from "googleapis";
 import { authenticate } from "@google-cloud/local-auth";
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
-const CREDENTIALS_PATH = "../credentials.json";
-const TOKEN_PATH = "../token.json";
+const TOKEN_PATH = "./token.json"; // Path to store the access token if not using a cloud service
 
 async function loadSavedCredentialsIfExist() {
   try {
@@ -19,8 +17,7 @@ async function loadSavedCredentialsIfExist() {
 }
 
 async function saveCredentials(client) {
-  const content = await fs.readFile(CREDENTIALS_PATH);
-  const keys = JSON.parse(content);
+  const keys = JSON.parse(process.env.GOOGLE_CREDENTIALS);
   const key = keys.installed || keys.web;
   const payload = JSON.stringify({
     type: "authorized_user",
@@ -32,38 +29,27 @@ async function saveCredentials(client) {
 }
 
 async function authorize() {
-  let client = await loadSavedCredentialsIfExist();
-  if (client) {
-    return client;
-  }
-  client = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
+  const client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.REDIRECT_URI
+  );
+
+  client.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN,
   });
-  if (client.credentials) {
-    await saveCredentials(client);
-  }
+
   return client;
 }
 async function scheduleMeet(auth, email, email2, purpose, dateTime) {
   const calendar = google.calendar({ version: "v3", auth });
 
-  const date = "2024-11-05"; // YYYY-MM-DD format
-  const time = "10:00:00"; // HH:mm:ss format
-  
-  // Create a combined datetime string in UTC
-  
-  // Create a Date object in UTC
-  const datetimeUTC = new Date(dateTime + 'Z'); // 'Z' indicates UTC
-  
-  // Add 1 hour
+  const datetimeUTC = new Date(dateTime + 'Z'); 
   const endUTC = new Date(datetimeUTC);
-  endUTC.setHours(endUTC.getHours() + 1); // Add 1 hour
-  
-  // Format start and end dates in ISO format
-  const startISO = datetimeUTC.toISOString(); // e.g. "2024-11-05T04:30:00.000Z" in UTC
-  const endISO = endUTC.toISOString(); // e.g. "2024-11-05T05:30:00.000Z" in UTC
-  
+  endUTC.setHours(endUTC.getHours() + 1);
+
+  const startISO = datetimeUTC.toISOString();
+  const endISO = endUTC.toISOString();
 
   const event = {
     summary: purpose,
@@ -78,7 +64,7 @@ async function scheduleMeet(auth, email, email2, purpose, dateTime) {
     },
     conferenceData: {
       createRequest: {
-        requestId: "some-random-string",
+        requestId: "random-string",
         conferenceSolutionKey: {
           type: "hangoutsMeet",
         },
@@ -106,6 +92,7 @@ async function scheduleMeet(auth, email, email2, purpose, dateTime) {
     console.error("Error creating event:", error);
   }
 }
+
 export default async function main(email1, email2, purpose, dateTime) {
   const auth = await authorize();
   return await scheduleMeet(auth, email1, email2, purpose, dateTime);
