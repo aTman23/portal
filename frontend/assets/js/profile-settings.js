@@ -7,18 +7,49 @@ Version      : 1.0
 (function($) {
     "use strict";
 	
-	// Pricing Options Show
+	// // Pricing Options Show
 	
-	$('#pricing_select input[name="rating_option"]').on('click', function() {
-		if ($(this).val() == 'price_free') {
-			$('#custom_price_cont').hide();
-		}
-		if ($(this).val() == 'custom_price') {
-			$('#custom_price_cont').show();
-		}
-		else {
-		}
-	});
+	// $('#pricing_select input[name="rating_option"]').on('click', function() {
+	// 	if ($(this).val() == 'price_free') {
+	// 		$('#custom_price_cont').hide();
+	// 	}
+	// 	if ($(this).val() == 'custom_price') {
+	// 		$('#custom_price_cont').show();
+	// 	}
+	// 	else {
+	// 	}
+	// });
+
+	// Pricing Options Show
+$('#pricing_select input[name="pricingFree"]').on('click', function() {
+    if ($(this).val() == 'price_free') {
+        $('#custom_price_cont').hide();
+    }
+    if ($(this).val() == 'custom_price') {
+        $('#custom_price_cont').show();
+    }
+    else {
+        $('#custom_price_cont').hide(); 
+    }
+});
+
+$('#pricing_select input[name="pricingFree"]').on('click', function() {
+    if ($(this).val() == 'price_free') {
+        $('#custom_price_cont').hide();
+        localStorage.setItem('doctorPrice', '0');
+    }
+    if ($(this).val() == 'custom_price') {
+        $('#custom_price_cont').show();
+        const customPrice = $('#custom_price').val();
+        localStorage.setItem('doctorPrice', customPrice);
+    }
+});
+
+$('#custom_price').on('change', function() {
+    const newPrice = $(this).val();
+    localStorage.setItem('doctorPrice', newPrice);
+});
+
 	
 	// Education Add More
 	
