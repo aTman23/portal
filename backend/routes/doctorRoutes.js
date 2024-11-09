@@ -259,6 +259,7 @@ router.put(
       addressLine1,
       addressLine2,
       city,
+      upiId,
       stateProvince,
       country,
       postalCode,
@@ -292,7 +293,7 @@ router.put(
             Gender = ?, DateOfBirth = ?, AboutMe = ?, Biography = ?, ClinicName = ?,
             ClinicAddress = ?, AddressLine1 = ?, AddressLine2 = ?, City = ?, StateProvince = ?,
             Country = ?, PostalCode = ?, PricingFree = ?, CustomPricePerHour = ?, 
-            ProfileImage = ?, ClinicImage1 = ?, ClinicImage2 = ?
+            ProfileImage = ?, ClinicImage1 = ?, ClinicImage2 = ?,upiId = ?
         WHERE UserID = ?
     `;
 
@@ -324,6 +325,7 @@ router.put(
         userImage,
         clinicImages[0],
         clinicImages[1],
+        upiId,
         userId,
       ]);
 

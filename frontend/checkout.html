@@ -72,9 +72,8 @@
             'input[name="patientName"]'
           ).value;
           const Mobile = document.querySelector('input[name="Mobile"]').value;
-          const Purpose = document.querySelector(
-            'input[name="Purpose"]'
-          ).value;
+          const Purpose = document.querySelector('input[name="Purpose"]').value;
+          const utrNo = document.querySelector('input[name="utrNo"]').value;
 
           if (!doctorId || !date || !time || !patientEmail) {
             alert("Please fill in all required fields.");
@@ -97,6 +96,7 @@
                   patientName,
                   Mobile,
                   Purpose,
+                  utrNo,
                 }),
               }
             );
@@ -106,8 +106,7 @@
             if (response.ok) {
               alert(data.message);
 
-
-              window.location.href = "https://psyshell.co"
+              window.location.href = "https://psyshell.co";
             } else {
               alert(data.message || "Failed to book appointment.");
             }
@@ -116,38 +115,46 @@
             alert("An error occurred while booking the appointment.");
           }
         }
-        
-    // Get doctor's CustomPrice from localStorage
-    const doctorData = JSON.parse(localStorage.getItem('doc-data'));
-    const customPricePerHour = doctorData?.profile?.customPricePerHour || '0';
 
-    // Update the consultation fee and total in the booking summary
-    document.querySelector('.booking-fee li span').textContent = `₹${customPricePerHour}`;
-    document.querySelector('.total-cost').textContent = `₹${customPricePerHour}`;
+        // Get doctor's CustomPrice from localStorage
+        const doctorData = JSON.parse(sessionStorage.getItem("doc-data"));
+        const customPricePerHour =
+          doctorData?.profile?.customPricePerHour || "0";
+
+        // Update the consultation fee and total in the booking summary
+        document.querySelector(
+          ".booking-fee li span"
+        ).textContent = `₹${customPricePerHour}`;
+        document.querySelector(
+          ".total-cost"
+        ).textContent = `₹${customPricePerHour}`;
       });
-    document.addEventListener('DOMContentLoaded', () => {
-  // Get doctor's UPI details
-  const doctorData = JSON.parse(localStorage.getItem('doc-data'));
-  const doctorUpiId = doctorData?.profile?.upiId;
-  
-  // Setup payment method handling
-  const upiSection = document.getElementById('upiPaymentDetails');
-  const upiDisplay = document.getElementById('doctorUpiId');
-  const copyButton = document.getElementById('copyUpiBtn');
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get doctor's UPI details
+        const doctorData = JSON.parse(sessionStorage.getItem("doc-data"));
+        const doctorUpiId = doctorData?.profile?.upiId;
 
-  // Display UPI ID
-  if (doctorUpiId) {
-    upiDisplay.textContent = doctorUpiId;
-  }
+        // Setup payment method handling
+        const upiSection = document.getElementById("upiPaymentDetails");
+        const upiDisplay = document.getElementById("doctorUpiId");
+        const copyButton = document.getElementById("copyUpiBtn");
 
-  // Payment method selection
-  document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      upiSection.style.display = e.target.value === 'upi' ? 'block' : 'none';
-    });
-  });
+        // Display UPI ID
+        if (doctorUpiId) {
+          upiDisplay.textContent = doctorUpiId;
+        }
 
-  const storedImageUrl = sessionStorage.getItem("profileImage");
+        // Payment method selection
+        document
+          .querySelectorAll('input[name="paymentMethod"]')
+          .forEach((radio) => {
+            radio.addEventListener("change", (e) => {
+              upiSection.style.display =
+                e.target.value === "upi" ? "block" : "none";
+            });
+          });
+
+        const storedImageUrl = sessionStorage.getItem("profileImage");
         if (storedImageUrl) {
           const profileImages = document.querySelectorAll("img.profileImage");
           profileImages.forEach((img) => {
@@ -155,17 +162,16 @@
           });
         }
 
-  // Copy UPI ID functionality
-  copyButton.addEventListener('click', () => {
-    navigator.clipboard.writeText(doctorUpiId).then(() => {
-      copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
-      setTimeout(() => {
-        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy UPI ID';
-      }, 2000);
-    });
-  });
-});
-
+        // Copy UPI ID functionality
+        copyButton.addEventListener("click", () => {
+          navigator.clipboard.writeText(doctorUpiId).then(() => {
+            copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy UPI ID';
+            }, 2000);
+          });
+        });
+      });
     </script>
   </head>
   <body>
@@ -198,7 +204,6 @@
             </div>
           </div>
 
-          
           <li class="nav-item contact-info">
             <div class="contact-details">
               <a href="mailto:contact@psyshell.help" class="contact-email">
@@ -234,7 +239,6 @@
         </div>
       </div>
 
-      
       <!-- /Breadcrumb -->
 
       <!-- Page Content -->
@@ -370,29 +374,44 @@
                       </div>
                     </div>
                     <!-- /Credit Card Payment -->
-<!-- Add this in the payment-widget section -->
-<div class="payment-list">
-  <label class="payment-radio upi-option">
-    <input type="radio" name="paymentMethod" value="upi" />
-    <span class="checkmark"></span>
-    Pay via UPI
-  </label>
-  <div id="upiPaymentDetails" class="upi-payment-section" style="display: none;">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="form-group">
-          <label>Pay to UPI ID:</label>
-          <div class="upi-details">
-            <div class="upi-id" id="doctorUpiId"></div>
-            <button class="btn btn-sm btn-copy" id="copyUpiBtn">
-              <i class="fas fa-copy"></i> Copy UPI ID
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                    <!-- Add this in the payment-widget section -->
+                    <div class="payment-list">
+                      <label class="payment-radio upi-option">
+                        <input type="radio" name="paymentMethod" value="upi" />
+                        <span class="checkmark"></span>
+                        Pay via UPI
+                      </label>
+                      <div
+                        id="upiPaymentDetails"
+                        class="upi-payment-section"
+                        style="display: none"
+                      >
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <label>Pay to UPI ID:</label>
+                              <div class="upi-details">
+                                <div class="upi-id" id="doctorUpiId"></div>
+                                <button
+                                  class="btn btn-sm btn-copy"
+                                  id="copyUpiBtn"
+                                >
+                                  <i class="fas fa-copy"></i> Copy UPI ID
+                                </button>
+                              </div>
+                            </div>
+                            <div>
+                              <input
+                                type="text"
+                                class="form-control"
+                                name="utrNo"
+                                placeholder="Enter UTR No"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                     <!-- Paypal Payment -->
                     <!-- <div class="payment-list">
