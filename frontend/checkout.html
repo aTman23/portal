@@ -147,6 +147,14 @@
     });
   });
 
+  const storedImageUrl = sessionStorage.getItem("profileImage");
+        if (storedImageUrl) {
+          const profileImages = document.querySelectorAll("img.profileImage");
+          profileImages.forEach((img) => {
+            img.src = storedImageUrl;
+          });
+        }
+
   // Copy UPI ID functionality
   copyButton.addEventListener('click', () => {
     navigator.clipboard.writeText(doctorUpiId).then(() => {
@@ -433,10 +441,11 @@
                 <div class="card-body">
                   <!-- Booking Doctor Info -->
                   <div class="booking-doc-info">
-                    <a href="doctor-profile.html" class="booking-doc-img">
+                    <a href="#" class="booking-doc-img">
                       <img
                         src="assets/img/doctors/dr.madhurima.jpg"
                         alt="User Image"
+                        class="profileImage"
                       />
                     </a>
                     <div class="booking-info">

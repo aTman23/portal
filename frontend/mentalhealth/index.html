@@ -143,20 +143,21 @@
         }
 
         function setProfileImages(ProfileImage) {
-      if (!ProfileImage?.data) return;
+          if (!ProfileImage?.data) return;
 
-      const bufferArray = new Uint8Array(ProfileImage?.data);
+          const bufferArray = new Uint8Array(ProfileImage?.data);
 
-      const blob = new Blob([bufferArray], { type: "image/jpeg" }); 
+          const blob = new Blob([bufferArray], { type: "image/jpeg" }); 
 
-      const imageUrl = URL.createObjectURL(blob);
-      const profileImages = document.querySelectorAll("img.profileImage");
-      profileImages.forEach((img) => {
-        img.src = imageUrl;
-      });
-    }
-   
-    
+          const imageUrl = URL.createObjectURL(blob);
+          const profileImages = document.querySelectorAll("img.profileImage");
+          sessionStorage.setItem("profileImage", imageUrl);
+          profileImages.forEach((img) => {
+            img.src = imageUrl;
+          });
+        }
+
+       
 
 
       });

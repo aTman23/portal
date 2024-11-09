@@ -33,46 +33,42 @@
   </head>
 
   <style>
-    .active{
+    .active {
       background-color: #15558d !important;
       color: white !important;
     }
   </style>
 
-<script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const DocName = urlParams.get("docName")
-  const DoctorId = urlParams.get("doctorId")
-  const selectedDate = urlParams.get("date");
-const selectedTime = urlParams.get("time");
-  const Loc = urlParams.get("Loc")
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const DocName = urlParams.get("docName");
+    const DoctorId = urlParams.get("doctorId");
+    const selectedDate = urlParams.get("date");
+    const selectedTime = urlParams.get("time");
+    const Loc = urlParams.get("Loc");
 
-  document.addEventListener("DOMContentLoaded",()=>{
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("name").textContent = DocName;
+      document.getElementById("loc").textContent = Loc;
 
+      if (!selectedDate || !selectedTime) {
+        document.getElementById("bookApt").href = "#";
 
-
-    document.getElementById("name").textContent = DocName;
-    document.getElementById("loc").textContent = Loc;
-
-    if(!selectedDate || !selectedTime){
-      document.getElementById("bookApt").href =  "#";
-
-
-      alert("Select A time Slot")
-
-    }else{
-      document.getElementById("bookApt").href +=  window.location.search;
-
-    }
-
-
-
-
-  })
-
-
-
-</script>
+        alert("Select A time Slot");
+      } else {
+        document.getElementById("bookApt").href += window.location.search;
+      }
+         // Check if there's a profile image in session storage and set it
+         const storedImageUrl = sessionStorage.getItem("profileImage");
+        if (storedImageUrl) {
+          const profileImages = document.querySelectorAll("img.profileImage");
+          profileImages.forEach((img) => {
+            img.src = storedImageUrl;
+          });
+        }
+      
+    });
+  </script>
 
   <body>
     <!-- Main Wrapper -->
@@ -92,7 +88,7 @@ const selectedTime = urlParams.get("time");
               <img src="assets/img/logo.png" class="img-fluid" alt="Logo" />
             </a>
           </div>
-          
+
           <div class="main-menu-wrapper">
             <div class="menu-header">
               <a href="#" class="menu-logo">
@@ -102,9 +98,8 @@ const selectedTime = urlParams.get("time");
                 <i class="fas fa-times"></i>
               </a>
             </div>
-           
           </div>
-       
+
           <li class="nav-item contact-info">
             <div class="contact-details">
               <a href="mailto:contact@psyshell.help" class="contact-email">
@@ -116,8 +111,6 @@ const selectedTime = urlParams.get("time");
             </div>
           </li>
         </nav>
-
-        
       </header>
       <!-- /Header -->
 
@@ -151,19 +144,23 @@ const selectedTime = urlParams.get("time");
               <div class="card">
                 <div class="card-body">
                   <div class="booking-doc-info">
-                    <a href="doctor-profile.html" class="booking-doc-img">
+                    <a href="#" class="booking-doc-img">
                       <img
                         src="assets/img/doctors/dr.madhurima.jpg"
                         alt="User Image"
+                        class="profileImage"
                       />
                     </a>
                     <div class="booking-info">
                       <h4>
-                        <a href="doctor-profile.html" id="name">Dr.Madhurima Mopidevi</a>
+                        <a href="doctor-profile.html" id="name"
+                          >Dr.Madhurima Mopidevi</a
+                        >
                       </h4>
-                 
+
                       <p class="text-muted mb-0">
-                        <i class="fas fa-map-marker-alt"></i> <span id="loc">Hyderabad, Telangana</span> 
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="loc">Hyderabad, Telangana</span>
                       </p>
                     </div>
                   </div>
@@ -185,7 +182,7 @@ const selectedTime = urlParams.get("time");
                   </div>
                 </div>
                 <!-- /Schedule Header -->
-              
+
                 <!-- Schedule Content -->
                 <div class="schedule-cont">
                   <div class="row">
@@ -204,7 +201,10 @@ const selectedTime = urlParams.get("time");
 
               <!-- Submit Section -->
               <div class="submit-section proceed-btn text-right">
-                <a href="checkout.html" id="bookApt" class="btn btn-primary submit-btn"
+                <a
+                  href="checkout.html"
+                  id="bookApt"
+                  class="btn btn-primary submit-btn"
                   >Book Appointment</a
                 >
               </div>
