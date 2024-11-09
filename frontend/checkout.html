@@ -132,7 +132,8 @@
       document.addEventListener("DOMContentLoaded", () => {
         // Get doctor's UPI details
         const doctorData = JSON.parse(sessionStorage.getItem("doc-data"));
-        const doctorUpiId = doctorData?.profile?.upiId;
+        const doctorUpiId = doctorData?.upiId;
+        console.log(doctorUpiId);
 
         // Setup payment method handling
         const upiSection = document.getElementById("upiPaymentDetails");

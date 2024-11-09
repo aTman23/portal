@@ -108,6 +108,8 @@
                     <span class="d-block text-info">${appointment.AppointmentTime}</span>
                 </td>
                 <td>${appointment.Purpose}</td>
+               <td>${appointment.utrNo}</td>
+
                 <td class="text-right">
                     <div class="table-action">
                       
@@ -142,6 +144,8 @@
                     <span class="d-block text-info">${appointment.AppointmentTime}</span>
                 </td>
                 <td>${appointment.Purpose}</td>
+                <td>${appointment.utrNo}</td>
+
                 <td class="text-right">
                     <div class="table-action">
                       
@@ -524,6 +528,7 @@ const formatDate = (dateString) => {
                                     <th>Patient Name</th>
                                     <th>Appoinment Date</th>
                                     <th>Purpose</th>
+                                    <th>UTR NO.</th>
                                   </tr>
                                 </thead>
                                 <tbody id="upcoming">
