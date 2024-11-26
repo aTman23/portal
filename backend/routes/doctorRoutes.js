@@ -107,6 +107,43 @@ router.get("/:name", async (req, res) => {
 
 
 
+router.get("/doctors/all", async (req, res) => {
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const offset = (page - 1) * limit;
+
+  try{
+    const [rows] = await pool.query(
+      `SELECT 
+          d.*,
+          e.Degree,
+          e.CollegeInstitute,
+          e.YearOfCompletion,
+          x.HospitalName,
+          x.FromDate,
+          x.ToDate,
+          x.Designation
+      FROM 
+          doc d
+      LEFT JOIN 
+          education e ON d.UserID = e.UserID
+      LEFT JOIN 
+          experience x ON d.UserID = x.UserID
+      LIMIT ? OFFSET ?`,
+      [limit, offset]
+  );
+  } catch (error) {
+
+
+    console.error("Error fetching doctors:", error);
+    res.status(500).json({ error: "Failed to fetch doctors" });
+  }
+
+
+
+
+});
+
 router.get("/user-image/:userId", async (req, res) => {
   const userId = req.params.userId;
 
