@@ -211,7 +211,7 @@ function convertTo12HourFormat(time) {
   return `${newHour}:${minutes} ${suffix}`;
 }
 
-router.get('/timeslots', async (req, res) => {
+router.get('/slots', async (req, res) => {
   const { psychologist_id, day_of_the_week } = req.query;
 
   // Validate input
