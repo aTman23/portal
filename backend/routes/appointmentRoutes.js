@@ -228,14 +228,9 @@ router.post("/book", async (req, res) => {
       'SELECT Email FROM doc WHERE UserID = ?',
       [doctorId]
     );
-    console.log(doctordetails,doctordetails[0].Email)
     const doctorEmail = doctordetails[0].Email;
-
     const datetimeString = `${date}T${time}`; 
-
-    
     const googleMeetLink = await generateGoogleMeetLink(patientEmail,doctorEmail,Purpose,datetimeString) || "https://meet.google.com/new";
-
     const [result] = await pool.query(
       'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime, Status,utrNo, MeetLink,Purpose) VALUES (?, ?, ?, ?, "booked",?, ?,?)',
       [doctorId, patientId, date, time,utrNo, googleMeetLink, Purpose]
@@ -247,20 +242,7 @@ router.post("/book", async (req, res) => {
         .json({ message: "Failed to book the appointment." });
     }
 
-    const mailOptions = {
-      from: process.env.Email,
-      to: patientEmail,
-      subject: "Appointment Confirmation",
-      text: `Your appointment is confirmed. Here is your Google Meet link: ${googleMeetLink}`,
-    };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error);
-      } else {
-        console.log("Email sent:", info.response);
-      }
-    });
 
     return res
       .status(200)
@@ -290,6 +272,36 @@ router.put("/status/:appointmentId", async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Appointment not found." });
     }
+
+
+    const [appointmentDetails] = await pool.query(
+      "SELECT a.*, p.Email FROM appointments a JOIN patients p ON a.PatientID = p.PatientID WHERE AppointmentID = ?",
+      [appointmentId]
+    );
+
+    const patientEmail = appointmentDetails[0].Email;
+
+    if (status === "accepted") {
+      const mailOptions = {
+      from: process.env.Email,
+      to: patientEmail,
+      subject: "Appointment acceptance",
+      text: `Your appointment is accepted. Here is your Google Meet link: ${appointmentDetails[0].MeetLink}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+      });
+    }
+
+
+
+    
+
     return res
       .status(200)
       .json({ message: "Appointment status updated successfully." });
