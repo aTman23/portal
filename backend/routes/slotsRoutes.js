@@ -247,4 +247,5 @@ router.get('/retrieveSlots', async (req, res) => {
   }
 });
 
+
 export default router
