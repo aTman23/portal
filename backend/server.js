@@ -11,6 +11,7 @@ import experienceRoutes from './routes/experienceRoutes.js';
 import pricingRoutes from './routes/pricingRoutes.js';
 import timeslotRoutes from './routes/timeslotRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import slotsRoutes from './routes/slotsRoutes.js'
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/profile/basic-info', basicInfoRoutes);
 app.use('/profile/education', educationRoutes);
 app.use('/profile/experience', experienceRoutes);
 app.use('/profile/pricing', pricingRoutes);
+app.use('/slots', slotsRoutes);
 
 app.get("/check", (req, res) => {
     res.json({ success: "working" });
