@@ -36,12 +36,15 @@
         async function fetchPsychologistDetails(name) {
           try {
             const response = await fetch(
-              `http://localhost:5000/doctors/${name}`
+              `https://portalserver-sepia.vercel.app/doctors/${name}`
             );
             if (response.ok) {
               const data = await response.json();
+              sessionStorage.setItem('doc-data', JSON.stringify(data.data.profile))
               displayServices(data.data.services);
               displaySpecializations(data.data.specializations);
+              
+              setProfileImages(data.data.profile.ProfileImage)
 
               Object.keys(data.data.profile).forEach((key) => {
                 const elements = document.querySelectorAll(`.${key}`);
@@ -90,6 +93,10 @@
 
                 eduContainer.appendChild(listItem);
               });
+
+
+              document.querySelector("a.apt-btn").href = `../booking.html?doctorId=${data.data.profile.UserID}&docName=${data.data.profile?.FirstName} ${data.data.profile?.LastName}&Loc=${data.data.profile.ClinicName+"" +data.data.profile.ClinicAddress}`
+
             } else {
               document.getElementById(
                 "profile"
@@ -124,7 +131,7 @@
           return listItem;
         }
 
-  
+
         function displayServices(services) {
           const servicesContainer = document.getElementById("servicesInput");
           servicesContainer.innerHTML = ""; 
@@ -135,13 +142,94 @@
             servicesContainer.appendChild(serviceItem); 
           });
         }
+
+        function setProfileImages(ProfileImage) {
+          if (!ProfileImage?.data) return;
+
+          const bufferArray = new Uint8Array(ProfileImage?.data);
+
+          const blob = new Blob([bufferArray], { type: "image/jpeg" }); 
+
+          const imageUrl = URL.createObjectURL(blob);
+          const profileImages = document.querySelectorAll("img.profileImage");
+          sessionStorage.setItem("profileImage", imageUrl);
+          profileImages.forEach((img) => {
+            img.src = imageUrl;
+          });
+        }
+
+       
+
+
       });
+
+
+   
     </script>
   </head>
   <body>
     <div class="main-wrapper" id="profile">
       <!-- Header -->
+      <header class="header">
+        <nav class="navbar navbar-expand-lg header-nav">
+          <div class="navbar-header">
+            <a id="mobile_btn" href="javascript:void(0);">
+              <span class="bar-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </a>
+            <a href="#" class="navbar-brand logo">
+              <img src="../assets/img/logo.png" class="img-fluid" alt="Logo" />
+            </a>
+          </div>
+          
+          <div class="main-menu-wrapper">
+            <div class="menu-header">
+              <a href="#" class="menu-logo">
+                <img src="../assets/img/logo.png" class="img-fluid" alt="Logo" />
+              </a>
+              <a id="menu_close" class="menu-close" href="javascript:void(0);">
+                <i class="fas fa-times"></i>
+              </a>
+            </div>
+           
+          </div>
+       
+          <li class="nav-item contact-info">
+            <div class="contact-details">
+              <a href="mailto:contact@psyshell.help" class="contact-email">
+                <i class="fas fa-envelope"></i> contact@psyshell.help
+              </a>
+              <div class="contact-phone">
+                <i class="fas fa-phone-alt"></i> +91 9121422554
+              </div>
+            </div>
+          </li>
+        </nav>
+      </header>
 
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-bar">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-md-12 col-12">
+              <nav aria-label="breadcrumb" class="page-breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+                    <a href="">Home</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">
+                    Booking
+                  </li>
+                </ol>
+              </nav>
+              <h2 class="breadcrumb-title">Booking</h2>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- /Header -->
 
       <!-- /Breadcrumb -->
@@ -157,7 +245,7 @@
                   <div class="doctor-img">
                     <img
                       src="../assets/img/doctors/doctor-thumb-02.jpg"
-                      class="img-fluid"
+                      class="img-fluid profileImage"
                       alt="User Image"
                     />
                   </div>
@@ -169,7 +257,7 @@
                     <p class="doc-department">
                       <img
                         src="../assets/img/specialities/specialities-05.png"
-                        class="img-fluid"
+                        class="img-fluid profileImage"
                         alt="Speciality"
                       />Psychologist
                     </p>
@@ -182,7 +270,7 @@
                       <span class="d-inline-block average-rating">(35)</span>
                     </div>
                     <div class="clinic-details">
-                      <p class="doc-location">
+                      <p class="doc-location d-none">
                         <i class="fas fa-map-marker-alt"></i>
                         <span class="ClinicAddress"> </span>
 
@@ -203,11 +291,11 @@
                      
                       <li>
                         <i class="far fa-money-bill-alt"></i>
-                        <span class="CustomerPricePerHour"> </span>rs. per hour
+                        <span class="CustomPricePerHour"> </span>rs. per hour
                       </li>
                     </ul>
                   </div>
-                  <div class="doctor-action">
+                  <div class="doctor-action d-none">
                     <a href="javascript:void(0)" class="btn btn-white fav-btn">
                       <i class="far fa-bookmark"></i>
                     </a>

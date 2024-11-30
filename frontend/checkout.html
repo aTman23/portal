@@ -30,6 +30,150 @@
       <script src="assets/js/html5shiv.min.js"></script>
       <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const DocName = urlParams.get("docName");
+      const DoctorId = urlParams.get("doctorId");
+      const selectedDate = urlParams.get("date");
+      const selectedTime = urlParams.get("time");
+      const Loc = urlParams.get("Loc");
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("name").textContent = DocName;
+        document.getElementById("loc").textContent = Loc;
+        if (!selectedDate || !selectedTime) {
+          alert("Select A time Slot");
+        } else {
+          document.getElementById("date").textContent = selectedDate;
+          document.getElementById("time").textContent = selectedTime;
+          document.getElementById("doctorIdInput").value = DoctorId;
+          document.getElementById("timeInput").value = selectedTime;
+          document.getElementById("dateInput").value = selectedDate;
+        }
+
+        document
+          .getElementById("SubmitBooking")
+          .addEventListener("click", (event) => {
+            event.preventDefault();
+            submitBooking();
+          });
+
+        async function submitBooking() {
+          const doctorId = document.querySelector(
+            'input[name="doctorId"]'
+          ).value;
+          const date = document.querySelector('input[name="date"]').value;
+          const time = document.querySelector('input[name="time"]').value;
+          const patientEmail = document.querySelector(
+            'input[name="patientEmail"]'
+          ).value;
+          const patientName = document.querySelector(
+            'input[name="patientName"]'
+          ).value;
+          const Mobile = document.querySelector('input[name="Mobile"]').value;
+          const Purpose = document.querySelector('input[name="Purpose"]').value;
+          const utrNo = document.querySelector('input[name="utrNo"]').value;
+
+          if (!doctorId || !date || !time || !patientEmail) {
+            alert("Please fill in all required fields.");
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              "https://portalserver-sepia.vercel.app/appoint/book",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  doctorId,
+                  date,
+                  time,
+                  patientEmail,
+                  patientName,
+                  Mobile,
+                  Purpose,
+                  utrNo,
+                }),
+              }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              alert(data.message);
+
+              window.location.href = "https://psyshell.co";
+            } else {
+              alert(data.message || "Failed to book appointment.");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred while booking the appointment.");
+          }
+        }
+
+        // Get doctor's CustomPrice from localStorage
+        const doctorData = JSON.parse(sessionStorage.getItem("doc-data"));
+        const customPricePerHour =
+          doctorData?.profile?.customPricePerHour || "0";
+
+        // Update the consultation fee and total in the booking summary
+        document.querySelector(
+          ".booking-fee li span"
+        ).textContent = `₹${customPricePerHour}`;
+        document.querySelector(
+          ".total-cost"
+        ).textContent = `₹${customPricePerHour}`;
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        // Get doctor's UPI details
+        const doctorData = JSON.parse(sessionStorage.getItem("doc-data"));
+        const doctorUpiId = doctorData?.upiId;
+        console.log(doctorUpiId);
+
+        // Setup payment method handling
+        const upiSection = document.getElementById("upiPaymentDetails");
+        const upiDisplay = document.getElementById("doctorUpiId");
+        const copyButton = document.getElementById("copyUpiBtn");
+
+        // Display UPI ID
+        if (doctorUpiId) {
+          upiDisplay.textContent = doctorUpiId;
+        }
+
+        // Payment method selection
+        document
+          .querySelectorAll('input[name="paymentMethod"]')
+          .forEach((radio) => {
+            radio.addEventListener("change", (e) => {
+              upiSection.style.display =
+                e.target.value === "upi" ? "block" : "none";
+            });
+          });
+
+        const storedImageUrl = sessionStorage.getItem("profileImage");
+        if (storedImageUrl) {
+          const profileImages = document.querySelectorAll("img.profileImage");
+          profileImages.forEach((img) => {
+            img.src = storedImageUrl;
+          });
+        }
+
+        // Copy UPI ID functionality
+        copyButton.addEventListener("click", () => {
+          navigator.clipboard.writeText(doctorUpiId).then(() => {
+            copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy UPI ID';
+            }, 2000);
+          });
+        });
+      });
+    </script>
   </head>
   <body>
     <!-- Main Wrapper -->
@@ -49,6 +193,7 @@
               <img src="assets/img/logo.png" class="img-fluid" alt="Logo" />
             </a>
           </div>
+
           <div class="main-menu-wrapper">
             <div class="menu-header">
               <a href="#" class="menu-logo">
@@ -58,72 +203,18 @@
                 <i class="fas fa-times"></i>
               </a>
             </div>
-            <ul class="main-nav">
-              <li>
-                <a href="doctor-dashboard.html">Dashboard</a>
-              </li>
-              <li><a href="appointments.html">Appointments</a></li>
-              <!-- <li><a href="schedule-timings.html">Schedule Timing</a></li> -->
-              <li>
-                <a href="doctor-profile.html">My Profile</a>
-              </li>
-              <li class="login-link">
-                <a href="login.html">Login / Signup</a>
-              </li>
-            </ul>
           </div>
-          <ul class="nav header-navbar-rht">
-            <li class="nav-item contact-item">
-              <div class="header-contact-img">
-                <i class="far fa-hospital"></i>
-              </div>
-              <div class="header-contact-detail">
-                <p class="contact-header">Contact</p>
-                <p class="contact-info-header">+91 99493 52203</p>
-              </div>
-            </li>
 
-            <!-- User Menu -->
-            <li class="nav-item dropdown has-arrow logged-item">
-              <a
-                href="#"
-                class="dropdown-toggle nav-link"
-                data-toggle="dropdown"
-              >
-                <span class="user-img">
-                  <img
-                    class="rounded-circle"
-                    src="assets/img/doctors/dr.madhurima.jpg"
-                    width="31"
-                    alt="Dr. Madhurima Mopidevi"
-                  />
-                </span>
+          <li class="nav-item contact-info">
+            <div class="contact-details">
+              <a href="mailto:contact@psyshell.help" class="contact-email">
+                <i class="fas fa-envelope"></i> contact@psyshell.help
               </a>
-              <div class="dropdown-menu dropdown-menu-right">
-                <div class="user-header">
-                  <div class="avatar avatar-sm">
-                    <img
-                      src="assets/img/doctors/dr.madhurima.jpg"
-                      alt="User Image"
-                      class="avatar-img rounded-circle"
-                    />
-                  </div>
-                  <div class="user-text">
-                    <h6>Dr. Madhurima Mopidevi</h6>
-                    <p class="text-muted mb-0">Doctor</p>
-                  </div>
-                </div>
-                <a class="dropdown-item" href="doctor-dashboard.html"
-                  >Dashboard</a
-                >
-                <!-- <a class="dropdown-item" href="doctor-profile-settings.html"
-                  >Profile Settings</a
-                > -->
-                <a class="dropdown-item" href="login.html">Logout</a>
+              <div class="contact-phone">
+                <i class="fas fa-phone-alt"></i> +91 9121422554
               </div>
-            </li>
-            <!-- /User Menu -->
-          </ul>
+            </div>
+          </li>
         </nav>
       </header>
       <!-- /Header -->
@@ -139,15 +230,16 @@
                     <a href="#">Home</a>
                   </li>
                   <li class="breadcrumb-item active" aria-current="page">
-                    Checkout
+                    Book
                   </li>
                 </ol>
               </nav>
-              <h2 class="breadcrumb-title">Checkout</h2>
+              <h2 class="breadcrumb-title">Booking</h2>
             </div>
           </div>
         </div>
       </div>
+
       <!-- /Breadcrumb -->
 
       <!-- Page Content -->
@@ -158,152 +250,208 @@
               <div class="card">
                 <div class="card-body">
                   <!-- Checkout Form -->
-                  <form
-                    action="https://dreamguys.co.in/demo/doccure/booking-success.html" -->
-                  
-                    <!-- Personal Information -->
-                    <div class="info-widget">
-                      <h4 class="card-title">Personal Information</h4>
-                      <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                          <div class="form-group card-label">
-                            <label>First Name</label>
-                            <input class="form-control" type="text" />
-                          </div>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                          <div class="form-group card-label">
-                            <label>Last Name</label>
-                            <input class="form-control" type="text" />
-                          </div>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                          <div class="form-group card-label">
-                            <label>Email</label>
-                            <input class="form-control" type="email" />
-                          </div>
-                        </div>
-                        <div class="col-md-6 col-sm-12">
-                          <div class="form-group card-label">
-                            <label>Phone</label>
-                            <input class="form-control" type="text" />
-                          </div>
+                  <input
+                    class="form-control d-none"
+                    type="text"
+                    required
+                    name="doctorId"
+                    id="doctorIdInput"
+                  />
+                  <input
+                    class="form-control d-none"
+                    type="text"
+                    required
+                    name="time"
+                    id="timeInput"
+                  />
+                  <input
+                    class="form-control d-none"
+                    type="text"
+                    required
+                    name="date"
+                    id="dateInput"
+                  />
+
+                  <div class="info-widget">
+                    <h4 class="card-title">Personal Information</h4>
+                    <div class="row">
+                      <div class="col-md-6 col-sm-12">
+                        <div class="form-group card-label">
+                          <label>Name</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            required
+                            name="patientName"
+                          />
                         </div>
                       </div>
-                      <div class="exist-customer">
-                        Existing Customer? <a href="#">Click here to login</a>
+                      <div class="col-md-6 col-sm-12">
+                        <div class="form-group card-label">
+                          <label>Purpose</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="Purpose"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-sm-12">
+                        <div class="form-group card-label">
+                          <label>Email</label>
+                          <input class="form-control" name="patientEmail" />
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-sm-12">
+                        <div class="form-group card-label">
+                          <label>Phone</label>
+                          <input class="form-control" name="Mobile" />
+                        </div>
                       </div>
                     </div>
-                    <!-- /Personal Information -->
+                  </div>
+                  <!-- /Personal Information -->
 
-                    <div class="payment-widget">
-                      <h4 class="card-title">Payment Method</h4>
+                  <div class="payment-widget">
+                    <h4 class="card-title">Payment Method</h4>
 
-                      <!-- Credit Card Payment -->
-                      <div class="payment-list">
-                        <label class="payment-radio credit-card-option">
-                          <input type="radio" name="radio" checked />
-                          <span class="checkmark"></span>
-                          Credit card
-                        </label>
+                    <!-- Credit Card Payment -->
+                    <div class="payment-list">
+                      <!-- <label class="payment-radio credit-card-option">
+                        <input type="radio" name="radio" checked />
+                        <span class="checkmark"></span>
+                        Pay After Connecting
+                      </label> -->
+                      <div class="row d-none">
+                        <div class="col-md-6">
+                          <div class="form-group card-label">
+                            <label for="card_name">Name on Card</label>
+                            <input
+                              class="form-control"
+                              id="card_name"
+                              type="text"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group card-label">
+                            <label for="card_number">Card Number</label>
+                            <input
+                              class="form-control"
+                              id="card_number"
+                              placeholder="1234  5678  9876  5432"
+                              type="text"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group card-label">
+                            <label for="expiry_month">Expiry Month</label>
+                            <input
+                              class="form-control"
+                              id="expiry_month"
+                              placeholder="MM"
+                              type="text"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group card-label">
+                            <label for="expiry_year">Expiry Year</label>
+                            <input
+                              class="form-control"
+                              id="expiry_year"
+                              placeholder="YY"
+                              type="text"
+                            />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group card-label">
+                            <label for="cvv">CVV</label>
+                            <input class="form-control" id="cvv" type="text" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /Credit Card Payment -->
+                    <!-- Add this in the payment-widget section -->
+                    <div class="payment-list">
+                      <label class="payment-radio upi-option">
+                        <input type="radio" name="paymentMethod" value="upi" />
+                        <span class="checkmark"></span>
+                        Pay via UPI
+                      </label>
+                      <div
+                        id="upiPaymentDetails"
+                        class="upi-payment-section"
+                        style="display: none"
+                      >
                         <div class="row">
-                          <div class="col-md-6">
-                            <div class="form-group card-label">
-                              <label for="card_name">Name on Card</label>
-                              <input
-                                class="form-control"
-                                id="card_name"
-                                type="text"
-                              />
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <label>Pay to UPI ID:</label>
+                              <div class="upi-details">
+                                <div class="upi-id" id="doctorUpiId"></div>
+                                <button
+                                  class="btn btn-sm btn-copy"
+                                  id="copyUpiBtn"
+                                >
+                                  <i class="fas fa-copy"></i> Copy UPI ID
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group card-label">
-                              <label for="card_number">Card Number</label>
+                            <div>
                               <input
-                                class="form-control"
-                                id="card_number"
-                                placeholder="1234  5678  9876  5432"
                                 type="text"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-4">
-                            <div class="form-group card-label">
-                              <label for="expiry_month">Expiry Month</label>
-                              <input
                                 class="form-control"
-                                id="expiry_month"
-                                placeholder="MM"
-                                type="text"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-4">
-                            <div class="form-group card-label">
-                              <label for="expiry_year">Expiry Year</label>
-                              <input
-                                class="form-control"
-                                id="expiry_year"
-                                placeholder="YY"
-                                type="text"
-                              />
-                            </div>
-                          </div>
-                          <div class="col-md-4">
-                            <div class="form-group card-label">
-                              <label for="cvv">CVV</label>
-                              <input
-                                class="form-control"
-                                id="cvv"
-                                type="text"
+                                name="utrNo"
+                                placeholder="Enter UTR No"
                               />
                             </div>
                           </div>
                         </div>
                       </div>
-                      <!-- /Credit Card Payment -->
+                    </div>
 
-                      <!-- Paypal Payment -->
-                      <!-- <div class="payment-list">
+                    <!-- Paypal Payment -->
+                    <!-- <div class="payment-list">
                         <label class="payment-radio paypal-option">
                           <input type="radio" name="radio" />
                           <span class="checkmark"></span>
                           Paypal
                         </label>
                       </div> -->
-                      <!-- /Paypal Payment -->
+                    <!-- /Paypal Payment -->
 
-                      <!-- Terms Accept -->
-                      <div class="terms-accept">
-                        <div class="custom-checkbox">
-                          <input type="checkbox" id="terms_accept" />
-                          <label for="terms_accept"
-                            >I have read and accept
-                            <a href="#">Terms &amp; Conditions</a></label
-                          >
-                        </div>
-                      </div>
-                      <!-- /Terms Accept -->
-
-                      <!-- Submit Section -->
-                      <div class="submit-section mt-4">
-                        <button
-                          type="submit"
-                          class="btn btn-primary submit-btn"
+                    <!-- Terms Accept -->
+                    <div class="terms-accept">
+                      <div class="custom-checkbox">
+                        <input type="checkbox" id="terms_accept" />
+                        <label for="terms_accept"
+                          >I have read and accept
+                          <a href="#">Terms &amp; Conditions</a></label
                         >
-                          Confirm and Pay
-                        </button>
                       </div>
-                      <!-- /Submit Section -->
                     </div>
-                  </form>
+                    <!-- /Terms Accept -->
+
+                    <!-- Submit Section -->
+                    <div class="submit-section mt-4">
+                      <button
+                        class="btn btn-primary submit-btn"
+                        id="SubmitBooking"
+                      >
+                        Confirm and Pay
+                      </button>
+                    </div>
+                    <!-- /Submit Section -->
+                  </div>
                   <!-- /Checkout Form -->
                 </div>
               </div>
             </div>
 
-            
             <div class="col-md-5 col-lg-4 theiaStickySidebar">
               <!-- Booking Summary -->
               <div class="card booking-card">
@@ -313,27 +461,22 @@
                 <div class="card-body">
                   <!-- Booking Doctor Info -->
                   <div class="booking-doc-info">
-                    <a href="doctor-profile.html" class="booking-doc-img">
+                    <a href="#" class="booking-doc-img">
                       <img
                         src="assets/img/doctors/dr.madhurima.jpg"
                         alt="User Image"
+                        class="profileImage"
                       />
                     </a>
                     <div class="booking-info">
                       <h4>
-                        <a href="doctor-profile.html">Dr. Madhurima Mopidevi</a>
+                        <a href="#" id="name">Dr. Madhurima Mopidevi</a>
                       </h4>
-                      <div class="rating">
-                        <i class="fas fa-star filled"></i>
-                        <i class="fas fa-star filled"></i>
-                        <i class="fas fa-star filled"></i>
-                        <i class="fas fa-star filled"></i>
-                        <i class="fas fa-star"></i>
-                        <span class="d-inline-block average-rating">35</span>
-                      </div>
+
                       <div class="clinic-details">
                         <p class="doc-location">
-                          <i class="fas fa-map-marker-alt"></i> Hyderabad, Telangana
+                          <i class="fas fa-map-marker-alt"></i>
+                          <span id="loc"></span>
                         </p>
                       </div>
                     </div>
@@ -343,13 +486,13 @@
                   <div class="booking-summary">
                     <div class="booking-item-wrap">
                       <ul class="booking-date">
-                        <li>Date <span>25 Oct 2024</span></li>
-                        <li>Time <span>10:00 AM</span></li>
+                        <li>Date <span id="date">25 Oct 2024</span></li>
+                        <li>Time <span id="time">10:00 AM</span></li>
                       </ul>
                       <ul class="booking-fee">
                         <li>Consulting Fee <span>₹___</span></li>
-                        <li>Booking Fee <span>₹___</span></li>
-                        <li>Video Call <span>₹___</span></li>
+                        <!-- <li>Booking Fee <span>₹___</span></li>
+                        <li>Video Call <span>₹___</span></li> -->
                       </ul>
                       <div class="booking-total">
                         <ul class="booking-total-list">
@@ -475,7 +618,7 @@
     <script src="assets/js/popper.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/checkout.js"></script>
-    
+
     <!-- Sticky Sidebar JS -->
     <script src="assets/plugins/theia-sticky-sidebar/ResizeSensor.js"></script>
     <script src="assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js"></script>

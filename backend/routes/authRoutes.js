@@ -131,4 +131,52 @@ router.post('/updatepassword', async (req, res) => {
     }
 });
 
+
+router.get("/doctors/all", async (req, res) => {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const offset = (page - 1) * limit;
+  
+    try{
+      const [rows] = await pool.query(
+        `SELECT 
+            d.UserID,
+            d.Name,
+            d.gender,
+            d.Username,
+            d.AboutMe,
+            d.ProfileImage,
+            d.clinicName,
+            d.ClinicAddress,
+            d.City,
+            d.CustomPricePerHour
+           
+        FROM 
+            doc d
+       
+        LIMIT ? OFFSET ?`,
+        [limit, offset]
+    );
+
+     // for every user id get the services and specializations
+        for (let i = 0; i < rows.length; i++) {
+            const [services] = await pool.query('SELECT ServiceName FROM doctor_services WHERE DoctorID = ?', [rows[i].UserID]);
+            const [specializations] = await pool.query('SELECT SpecializationName FROM doctor_specializations WHERE DoctorID = ?', [rows[i].UserID]);
+            rows[i].services = services.map((service) => service.ServiceName);
+            rows[i].specializations = specializations.map((specialization) => specialization.SpecializationName);
+        }
+
+    res.json(rows);
+    } catch (error) {
+  
+  
+      console.error("Error fetching doctors:", error);
+      res.status(500).json({ error: "Failed to fetch doctors" });
+    }
+  
+  
+  
+  
+  });
+
 export default router;

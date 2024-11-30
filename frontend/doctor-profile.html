@@ -14,6 +14,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <script src="protect.js"></script>
 
     <!-- Fontawesome CSS -->
     <link
@@ -45,11 +46,11 @@
         }
 
         const name = getPsychologistName();
-
+         
         async function fetchPsychologistDetails(id) {
           try {
             const response = await fetch(
-              `http://localhost:5000/doctors/d/${id}`
+              `https://portalserver-sepia.vercel.app/doctors/d/${id}`
             );
             if (response.ok) {
               const data = await response.json();
@@ -216,7 +217,7 @@
                 <a href="doctor-profile.html">My Profile</a>
               </li>
               <li class="login-link">
-                <a href="login.html">Login / Signup</a>
+                <!-- <a href="login.html">Login / Signup</a> -->
               </li>
             </ul>
           </div>
@@ -230,7 +231,17 @@
                 <p class="contact-info-header">+91 99493 52203</p>
               </div>
             </li>
-
+            <li class="nav-item contact-info">
+              <div class="contact-details">
+                <a href="mailto:contact@psyshell.help" class="contact-email">
+                  <i class="fas fa-envelope"></i> contact@psyshell.help
+                </a>
+                <div class="contact-phone">
+                  <i class="fas fa-phone-alt"></i> +91 9121422554
+                </div>
+              </div>
+            </li>
+            
             <!-- User Menu -->
             <li class="nav-item dropdown has-arrow logged-item">
               <a
@@ -356,7 +367,7 @@
                      
                       <li>
                         <i class="far fa-money-bill-alt"></i>
-                        <span class="CustomerPricePerHour"> </span>rs. per hour
+                        <span class="CustomPricePerHour"> </span>rs. per hour
                       </li>
                     </ul>
                   </div>
@@ -384,9 +395,9 @@
                       <i class="fas fa-video"></i>
                     </a>
                   </div>
-                  <div class="clinic-booking d-none">
-                    <a class="apt-btn" href="booking.html"
-                      >Book Appointment</a
+                  <div class="clinic-booking" id="shareProfileBtn">
+                    <a class="apt-btn" 
+                      >Share Profile</a
                     >
                   </div>
                 </div>
@@ -947,4 +958,40 @@
   </body>
 
   <!-- doccure/doctor-profile.html  30 Nov 2019 04:12:16 GMT -->
+
+
+  <script>
+   document.getElementById("shareProfileBtn").addEventListener("click", async () => {
+  const storedData = JSON.parse(localStorage.getItem("doc-data"));
+  const userData = storedData?.profile;
+  
+  if(!userData.Username){
+    alert("You Dont have username Please add your username in profile settings")
+    window.location.href = "doctor-profile-settings.html";
+    return;
+  }
+
+  const specialization = userData.specialization_name?.toLowerCase() || 'psychologist';
+
+  const profileData = {
+    title: `${userData?.FirstName} ${userData?.LastName} 's Profile ON PsyShell `,
+    text: "Check out my profile profile! and book an Appointment",
+    url: `https://psyshell.help/mentalhealth/#${userData.Username}` // Replace with the actual URL of the patient's profile
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(profileData);
+    } else {
+      alert("Share feature not supported in this browser.");
+      console.log("Share data:", profileData);
+    }
+  } catch (error) {
+    console.error("Error sharing profile:", error);
+    alert("An error occurred while sharing the profile.");
+  }
+});
+
+
+  </script>
 </html>

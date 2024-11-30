@@ -1936,7 +1936,41 @@ button.bg-danger:hover {
 	line-height: 85px;
 	padding: 0 10px;
 }
-
+.contact-info {
+	display: flex;
+	align-items: center;
+	margin-right: 20px;
+  }
+  
+  .contact-details {
+	text-align: right;
+	line-height: 1.4;
+  }
+  
+  .contact-email, 
+  .contact-phone {
+	color: #272b41;
+	font-size: 14px;
+	font-weight: 500;
+	display: block;
+  }
+  
+  .contact-email:hover {
+	color: #20c0f3;
+	text-decoration: none;
+  }
+  
+  .contact-details i {
+	color: #20c0f3;
+	margin-right: 5px;
+  }
+  
+  @media (max-width: 991px) {
+	.contact-info {
+	  display: none;
+	}
+  }
+  
 /*-----------------
 	12. Mobile Menu
 -----------------------*/
@@ -3575,7 +3609,11 @@ html.menu-opened body {
 .submit-section.proceed-btn {
 	margin: 0 0 30px;
 }
-
+.submit-btn.disabled {
+	pointer-events: none;
+	opacity: 0.5;
+  }
+  
 /*-----------------
 	19. Checkout
 -----------------------*/
@@ -3749,6 +3787,41 @@ html.menu-opened body {
     float: right;
 }
 
+.upi-payment-section {
+	padding: 15px;
+	background: #f8f9fa;
+	border-radius: 5px;
+	margin-top: 10px;
+  }
+  
+  .upi-details {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 10px;
+  }
+  
+  .upi-id {
+	padding: 8px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 16px;
+	font-weight: 500;
+  }
+  
+  .btn-copy {
+	padding: 5px 10px;
+	background: #20c0f3;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+  }
+  
+  .btn-copy:hover {
+	background: #1ba8d8;
+  }
+  
 /*-----------------
 	20. Booking Success
 -----------------------*/

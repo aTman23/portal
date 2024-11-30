@@ -7,19 +7,77 @@ Version      : 1.0
 (function($) {
     "use strict";
 	
+	// // Pricing Options Show
+	
+	// $('#pricing_select input[name="rating_option"]').on('click', function() {
+	// 	if ($(this).val() == 'price_free') {
+	// 		$('#custom_price_cont').hide();
+	// 	}
+	// 	if ($(this).val() == 'custom_price') {
+	// 		$('#custom_price_cont').show();
+	// 	}
+	// 	else {
+	// 	}
+	// });
+
 	// Pricing Options Show
+$('#pricing_select input[name="pricingFree"]').on('click', function() {
+    if ($(this).val() == 'price_free') {
+        $('#custom_price_cont').hide();
+    }
+    if ($(this).val() == 'custom_price') {
+        $('#custom_price_cont').show();
+    }
+    else {
+        $('#custom_price_cont').hide(); 
+    }
+});
+
+$('#pricing_select input[name="pricingFree"]').on('click', function() {
+    if ($(this).val() == 'price_free') {
+        $('#custom_price_cont').hide();
+        localStorage.setItem('doctorPrice', '0');
+    }
+    if ($(this).val() == 'custom_price') {
+        $('#custom_price_cont').show();
+        const customPrice = $('#custom_price').val();
+        localStorage.setItem('doctorPrice', customPrice);
+    }
+});
+
+$('#custom_price').on('change', function() {
+    const newPrice = $(this).val();
+    localStorage.setItem('doctorPrice', newPrice);
+});
+
+// UPI validation function
+
+function validateUpiId(upild) {
+
+	const upiregex = /^[\w\.\-_]{3,}@[a-zA-Z]{3,}$/;
 	
-	$('#pricing_select input[name="rating_option"]').on('click', function() {
-		if ($(this).val() == 'price_free') {
-			$('#custom_price_cont').hide();
-		}
-		if ($(this).val() == 'custom_price') {
-			$('#custom_price_cont').show();
-		}
-		else {
-		}
-	});
+	return upiRegex.test(upild);
 	
+	}
+	
+	// Add to form submission handler
+	
+	const upiId = document.getElementById('upiId').value;
+	
+	if (!validateUpiId(upiId)) {
+	
+	alert('Please enter a valid UPI ID');
+	
+	return;
+	
+	}
+	
+	formData.append('upiId', upiId);
+
+	if (response.ok) {
+		localStorage.setItem("doc-data", JSON.stringify(data.data));
+		// The UPI ID is now stored in localStorage within the profile data
+	  }
 	// Education Add More
 	
     $(".education-info").on('click','.trash', function () {

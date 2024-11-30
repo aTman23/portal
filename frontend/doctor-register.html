@@ -38,40 +38,53 @@
 <div class='content'>
 <div class='container-fluid'>
 <div class='row'>
-<div class='col-md-8 offset-md-2'>
-<div class='account-content'>
-<div class='row align-items-center justify-content-center'>
-<div class='col-md-6 login-left'>
-<img src='assets/img/login-banner.png' alt='Banner' />
+            <div class='col-md-8 offset-md-2'>
+                        <div class='account-content'>
+                                <div class='row align-items-center justify-content-center'>
+                                    <div class="col-md-6 login-left">
+                                        <img src="assets/img/login-banner.png" class="img-fluid" alt="Banner" />
+                                    </div>
+
+                                            <div class='col-md-6 login-right'>
+                                                        <div class='login-header'>
+                                                        <h3>Doctor Register</h3>
+                                                        </div>
+
+                                                    <form id='registerForm'>
+                                                        <label>Name*</label>
+
+                                                        <div class='form-group form-focus'>
+                                                            
+                                                        <input type='text' id='name'  class="form-control floating" required placeholder='Name' />
+                                                        </div>
+                                                        <label>Mobile Number*</label>
+
+                                                        <div class='form-group form-focus'>
+                                                        <input type='text' id='mobile' pattern='\d{10}' title='Enter a valid mobile number'  class="form-control floating" required placeholder='Mobile' />
+                                                        </div>
+                                                        <label>Email*</label>
+
+                                                        <div class='form-group form-focus'>
+                                                        <input type='email' id='email' required placeholder='Email'  class="form-control floating"/>
+                                                        </div>
+                                                        <label>Password*</label>
+
+                                                        <div class='form-group form-focus'>
+                                                        <input type='password' id='password' minlength='6' required placeholder='Password'  class="form-control floating" />
+                                                        </div>
+
+                                                        <button type='submit' class="btn btn-primary btn-block">Signup</button>   
+                                                        <div id='registerErrorMessage' style='color:red;'></div>
+
+                                                    </form> 
+                                            <!-- Error Message -->
+                                            </div> 
+                                </div> 
+                        </div> 
+            </div> 
 </div>
-
-<div class='col-md-6 login-right'>
-<div class='login-header'>
-<h3>Doctor Register</h3>
 </div>
-
-<form id='registerForm'>
-<div class='form-group form-focus'>
-<input type='text' id='name' required placeholder='Name' />
-<label>Name*</label></div>
-
-<div class='form-group form-focus'>
-<input type='text' id='mobile' pattern='\d{10}' title='Enter a valid mobile number' required placeholder='Mobile' />
-<label>Mobile Number*</label></div>
-
-<div class='form-group form-focus'>
-<input type='email' id='email' required placeholder='Email' />
-<label>Email*</label></div>
-
-<div class='form-group form-focus'>
-<input type='password' id='password' minlength='6' required placeholder='Password' />
-<label>Password*</label></div>
-
-<button type='submit'>Signup</button>
-
-<!-- Error Message -->
-<div id='registerErrorMessage' style='color:red;'></div>
-
+</div>
 <script src='assets/js/jquery.min.js'></script> 
 <script src='assets/js/bootstrap.min.js'></script> 
 <script>
@@ -112,11 +125,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
 });
 </script>
 
- </form> 
- </div> 
- </div> 
- </div> 
- </div> 
- </div> 
+
+
  </body> 
  </html>
