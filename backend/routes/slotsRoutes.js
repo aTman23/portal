@@ -26,10 +26,10 @@ function convertTo24HourFormat(time) {
 
 //Inserting a slot
 router.post('/slots', async (req, res) => {
-  const { userId, start_time, end_time, day_of_the_week } = req.body;
+  const { psychologist_id, start_time, end_time, day_of_the_week } = req.body;
 
   // Validate input
-  if (!userId || !start_time || !end_time || !day_of_the_week) {
+  if (!psychologist_id || !start_time || !end_time || !day_of_the_week) {
     return res.status(400).json({ message: 'Missing required fields.' });
   }
 
@@ -41,7 +41,7 @@ router.post('/slots', async (req, res) => {
     // Check for overlapping schedules
     const conflictQuery = `
       SELECT * FROM schedules
-      WHERE userId = ? AND day_of_the_week = ?
+      WHERE psychologist_id = ? AND day_of_the_week = ?
         AND (
           (start_time <= ? AND end_time > ?) OR  -- New start time overlaps an existing slot
           (start_time < ? AND end_time >= ?) OR -- New end time overlaps an existing slot
@@ -49,7 +49,7 @@ router.post('/slots', async (req, res) => {
         )
     `;
     const [conflicts] = await pool.query(conflictQuery, [
-      userId,
+      psychologist_id,
       day_of_the_week,
       start_time, start_time, // New start time overlaps
       end_time, end_time,     // New end time overlaps
@@ -68,11 +68,11 @@ router.post('/slots', async (req, res) => {
   
       // Insert the slot into the database
       const insertQuery = `
-        INSERT INTO slots (userId, start_time, end_time, day_of_the_week)
+        INSERT INTO slots (psychologist_id, start_time, end_time, day_of_the_week)
         VALUES (?, ?, ?, ?)
       `;
       const [result] = await pool.query(insertQuery, [
-        userId,
+        psychologist_id,
         startTime24,
         endTime24,
         day_of_the_week
@@ -91,10 +91,10 @@ router.post('/slots', async (req, res) => {
 
 //Updating a slot
 router.put('/slots', async (req, res) => {
-  const { userId, start_time, end_time, day_of_the_week } = req.body;
+  const { psychologist_id, start_time, end_time, day_of_the_week } = req.body;
 
   // Validate input
-  if (!userId || !start_time || !end_time || !day_of_the_week) {
+  if (!psychologist_id || !start_time || !end_time || !day_of_the_week) {
     return res.status(400).json({ message: 'Missing required fields.' });
   }
 
@@ -103,10 +103,10 @@ router.put('/slots', async (req, res) => {
   }
 
   try {
-    // Check for overlapping slots based on userId and day_of_the_week
+    // Check for overlapping slots based on psychologist_id and day_of_the_week
     const conflictQuery = `
       SELECT * FROM slots
-      WHERE userId = ? AND day_of_the_week = ?
+      WHERE psychologist_id = ? AND day_of_the_week = ?
         AND (
           (start_time <= ? AND end_time > ?) OR  -- New start time overlaps an existing slot
           (start_time < ? AND end_time >= ?) OR -- New end time overlaps an existing slot
@@ -114,7 +114,7 @@ router.put('/slots', async (req, res) => {
         )
     `;
     const [conflicts] = await pool.query(conflictQuery, [
-      userId,
+      psychologist_id,
       day_of_the_week,
       start_time, start_time, // New start time overlaps
       end_time, end_time,     // New end time overlaps
@@ -135,12 +135,12 @@ router.put('/slots', async (req, res) => {
       const updateQuery = `
         UPDATE slots
         SET start_time = ?, end_time = ?
-        WHERE userId = ? AND day_of_the_week = ?
+        WHERE psychologist_id = ? AND day_of_the_week = ?
       `;
       const [result] = await pool.query(updateQuery, [
         startTime24,
         endTime24,
-        userId,
+        psychologist_id,
         day_of_the_week
       ]);
   
@@ -161,10 +161,10 @@ router.put('/slots', async (req, res) => {
 
 //Deleting a slot
 router.delete('/slots', async (req, res) => {
-  const { userId, start_time, day_of_the_week } = req.body;
+  const { psychologist_id, start_time, day_of_the_week } = req.body;
 
   // Validate input
-  if (!userId || !start_time || !day_of_the_week) {
+  if (!psychologist_id || !start_time || !day_of_the_week) {
     return res.status(400).json({ message: 'Missing required fields.' });
   }
 
@@ -175,8 +175,8 @@ router.delete('/slots', async (req, res) => {
   try {
     // Check if the slot exists before trying to delete it
     const [existingSlots] = await pool.query(
-      'SELECT * FROM slots WHERE userId = ? AND start_time = ? AND day_of_the_week = ?',
-      [userId, start_time, day_of_the_week]
+      'SELECT * FROM slots WHERE psychologist_id = ? AND start_time = ? AND day_of_the_week = ?',
+      [psychologist_id, start_time, day_of_the_week]
     );
 
     if (existingSlots.length === 0) {
@@ -186,9 +186,9 @@ router.delete('/slots', async (req, res) => {
     // Delete the slot
     const deleteQuery = `
       DELETE FROM slots
-      WHERE userId = ? AND start_time = ? AND day_of_the_week = ?
+      WHERE psychologist_id = ? AND start_time = ? AND day_of_the_week = ?
     `;
-    const [result] = await pool.query(deleteQuery, [userId, start_time, day_of_the_week]);
+    const [result] = await pool.query(deleteQuery, [psychologist_id, start_time, day_of_the_week]);
 
     // Check if the delete operation was successful
     if (result.affectedRows === 0) {
@@ -212,10 +212,10 @@ function convertTo12HourFormat(time) {
 }
 
 router.get('/slots', async (req, res) => {
-  const { userId, day_of_the_week } = req.query;
+  const { psychologist_id, day_of_the_week } = req.query;
 
   // Validate input
-  if (!userId || !day_of_the_week) {
+  if (!psychologist_id || !day_of_the_week) {
     return res.status(400).json({ message: 'Missing required fields.' });
   }
 
@@ -224,10 +224,10 @@ router.get('/slots', async (req, res) => {
   }
 
   try {
-    // Query the database for slots based on userId and day_of_the_week
+    // Query the database for slots based on psychologist_id and day_of_the_week
     const [slots] = await pool.query(
-      'SELECT start_time, end_time FROM slots WHERE userId = ? AND day_of_the_week = ? ORDER BY start_time',
-      [userId, day_of_the_week]
+      'SELECT start_time, end_time FROM slots WHERE psychologist_id = ? AND day_of_the_week = ? ORDER BY start_time',
+      [psychologist_id, day_of_the_week]
     );
 
     if (slots.length === 0) {
