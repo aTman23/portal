@@ -6829,3 +6829,73 @@ html.menu-opened body {
 		margin-bottom: 10px;
 	}
 }
+
+/* Activity Status Toggle Styles */
+.status-toggle {
+    position: relative;
+    display: inline-block;
+    width: 160px;
+    height: 36px;
+    margin-top: 6px;
+    vertical-align: middle;
+}
+
+.status-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.status-toggle .checktoggle {
+    position: absolute;
+    cursor: pointer;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    height: 36px;
+    background-color: #dc3545;
+    transition: all 0.4s ease;
+    border-radius: 36px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.status-toggle .checktoggle:before {
+    position: absolute;
+    content: "";
+    height: 28px;
+    width: 28px;
+    left: 4px;
+    top: 4px;
+    background-color: white;
+    transition: all 0.4s ease;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.status-toggle .checktoggle:after {
+    content: 'Inactive';
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.status-toggle input:checked + .checktoggle {
+    background-color: #28a745;
+}
+
+.status-toggle input:checked + .checktoggle:before {
+    transform: translateX(120px);
+}
+
+.status-toggle input:checked + .checktoggle:after {
+    content: 'Active';
+    left: 45px;
+    right: auto;
+}
+

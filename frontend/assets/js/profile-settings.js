@@ -6,19 +6,6 @@ Version      : 1.0
 
 (function($) {
     "use strict";
-	
-	// // Pricing Options Show
-	
-	// $('#pricing_select input[name="rating_option"]').on('click', function() {
-	// 	if ($(this).val() == 'price_free') {
-	// 		$('#custom_price_cont').hide();
-	// 	}
-	// 	if ($(this).val() == 'custom_price') {
-	// 		$('#custom_price_cont').show();
-	// 	}
-	// 	else {
-	// 	}
-	// });
 
 	// Pricing Options Show
 $('#pricing_select input[name="pricingFree"]').on('click', function() {
@@ -60,7 +47,7 @@ function validateUpiId(upild) {
 	
 	}
 	
-	// Add to form submission handler
+	//form submission handler
 	
 	const upiId = document.getElementById('upiId').value;
 	
@@ -76,7 +63,6 @@ function validateUpiId(upild) {
 
 	if (response.ok) {
 		localStorage.setItem("doc-data", JSON.stringify(data.data));
-		// The UPI ID is now stored in localStorage within the profile data
 	  }
 	// Education Add More
 	
@@ -254,3 +240,16 @@ function validateUpiId(upild) {
     });
 	
 })(jQuery);
+
+fetch(`${API_BASE_URL}/activity-status/update/${doctorId}`, {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify({
+        activityStatus: newStatus
+    })
+});
+
+const API_BASE_URL = 'http://localhost:5000';
