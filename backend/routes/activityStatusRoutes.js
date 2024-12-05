@@ -1,9 +1,9 @@
 import express from 'express';
 import { updateActivityStatus } from '../controllers/activityStatusController.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.put('/update/:doctorId', authMiddleware, updateActivityStatus);
+// Route to update doctor's activity status without middleware
+router.put('/toggle/:doctorId', updateActivityStatus);
 
 export default router;
