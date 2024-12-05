@@ -1,4 +1,4 @@
-import Doctor from '../models/doctorModel.js';
+
 
 export const updateActivityStatus = async (req, res) => {
     try {
