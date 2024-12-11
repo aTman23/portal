@@ -134,28 +134,28 @@ router.post('/updatepassword', async (req, res) => {
 
 router.get("/doctors/all", async (req, res) => {
     const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const limit = req.query.limit || 100;
     const offset = (page - 1) * limit;
   
     try{
-      const [rows] = await pool.query(
-        `SELECT 
-            d.UserID,
-            d.Name,
-            d.gender,
-            d.Username,
-            d.AboutMe,
-            d.ProfileImage,
-            d.clinicName,
-            d.ClinicAddress,
-            d.City,
-            d.CustomPricePerHour
-           
-        FROM 
-            doc d
-       
-        LIMIT ? OFFSET ?`,
-        [limit, offset]
+    const [rows] = await pool.query(
+      `SELECT 
+        d.UserID,
+        d.Name,
+        d.gender,
+        d.Username,
+        d.AboutMe,
+        d.ProfileImage,
+        d.clinicName,
+        d.ClinicAddress,
+        d.City,
+        d.CustomPricePerHour
+      FROM 
+        doc d
+      WHERE 
+        d.Username IS NOT NULL AND d.Username != ''
+      LIMIT ? OFFSET ?`,
+      [limit, offset]
     );
 
      // for every user id get the services and specializations
