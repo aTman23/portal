@@ -685,7 +685,7 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
 
-        const API = "http://localhost:5000";
+        const API = "https://portalserver-sepia.vercel.app";
         const slotscont = document.getElementById("slots");
 
         // Clear existing options
@@ -708,13 +708,13 @@
         };
 
         const formatTime = (time) => {
-          const [hour, minute] = time.split(":").map(Number);
-          const period = hour >= 12 ? "pm" : "am";
-          const formattedHour = hour % 12 || 12;
-          return `${formattedHour}:${minute
-            .toString()
-            .padStart(2, "0")} ${period}`;
-        };
+  const [hour, minute] = time.split(":").map(Number); 
+  const period = hour >= 12 ? "am" : "pm"; 
+  const formattedHour = hour % 12 || 12; 
+  return `${formattedHour.toString().padStart(2, "0")}:${minute
+    .toString()
+    .padStart(2, "0")} ${period}`;
+};
 
         const slots = generateTimeSlots(8, 17, 60);
         slots.forEach((slot) => {

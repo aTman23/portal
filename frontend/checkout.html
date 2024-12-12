@@ -37,15 +37,17 @@
       const DoctorId = urlParams.get("doctorId");
       const selectedDate = urlParams.get("date");
       const slot = urlParams.get("time");
-      const selectedTime = convertTo24Hour(urlParams.get("time"));
+      const selectedTime = convertTo24Hour(urlParams.get("time").substring(0,8));
+   
       const Loc = urlParams.get("Loc");
 
       function convertTo24Hour(time) {
+
         var hours = parseInt(time.substr(0, 2));
-        if (time.indexOf("AM") != -1 && hours == 12) {
+        if (time.indexOf("am") != -1 && hours == 12) {
           time = time.replace("12", "0");
         }
-        if (time.indexOf("PM") != -1 && hours < 12) {
+        if (time.indexOf("pm") != -1 && hours < 12) {
           time = time.replace(hours, hours + 12);
         }
         return time.replace(/( am| pm)/, "");
@@ -58,10 +60,7 @@
           alert("Select A time Slot");
         } else {
           document.getElementById("date").textContent = selectedDate;
-          document.getElementById("time").textContent = selectedTime.substring(
-            0,
-            5
-          );
+          document.getElementById("time").textContent = selectedTime
           document.getElementById("doctorIdInput").value = DoctorId;
           document.getElementById("timeInput").value = selectedTime;
           document.getElementById("dateInput").value = selectedDate;

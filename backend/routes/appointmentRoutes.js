@@ -228,7 +228,7 @@ router.post("/book", async (req, res) => {
       'SELECT Email FROM doc WHERE UserID = ?',
       [doctorId]
     );
-    const doctorEmail = doctordetails[0].Email;
+    const doctorEmail = doctordetails[0]?.Email;
     const datetimeString = `${date}T${time}`; 
     const googleMeetLink = await generateGoogleMeetLink(patientEmail,doctorEmail,Purpose,datetimeString) || "https://meet.google.com/new";
     const [result] = await pool.query(
