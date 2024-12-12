@@ -183,7 +183,7 @@ router.get("/patient/:patientId", async (req, res) => {
 });
 
 router.post("/book", async (req, res) => {
-  const { doctorId, date, time, patientEmail, patientName, Mobile, Purpose,utrNo } =
+  const { doctorId, date, time, patientEmail, patientName, Mobile, Purpose,utrNo,slot } =
     req.body;
 
   if (!doctorId || !date || !time || !patientEmail) {
@@ -232,8 +232,8 @@ router.post("/book", async (req, res) => {
     const datetimeString = `${date}T${time}`; 
     const googleMeetLink = await generateGoogleMeetLink(patientEmail,doctorEmail,Purpose,datetimeString) || "https://meet.google.com/new";
     const [result] = await pool.query(
-      'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime, Status,utrNo, MeetLink,Purpose) VALUES (?, ?, ?, ?, "booked",?, ?,?)',
-      [doctorId, patientId, date, time,utrNo, googleMeetLink, Purpose]
+      'INSERT INTO appointments (DoctorID, PatientID, AppointmentDate, AppointmentTime, Status,utrNo,slot, MeetLink,Purpose) VALUES (?, ?, ?, ?, "booked",?,?, ?,?)',
+      [doctorId, patientId, date, time,utrNo, slot, googleMeetLink, Purpose]
     );
 
     if (result.affectedRows === 0) {

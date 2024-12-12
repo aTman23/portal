@@ -46,6 +46,7 @@
     const selectedDate = urlParams.get("date");
     const selectedTime = urlParams.get("time");
     const Loc = urlParams.get("Loc");
+    const API = "http://localhost:5000";
 
     document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("name").textContent = DocName;
@@ -53,20 +54,17 @@
 
       if (!selectedDate || !selectedTime) {
         document.getElementById("bookApt").href = "#";
-
-        alert("Select A time Slot");
       } else {
         document.getElementById("bookApt").href += window.location.search;
       }
-         // Check if there's a profile image in session storage and set it
-         const storedImageUrl = sessionStorage.getItem("profileImage");
-        if (storedImageUrl) {
-          const profileImages = document.querySelectorAll("img.profileImage");
-          profileImages.forEach((img) => {
-            img.src = storedImageUrl;
-          });
-        }
-      
+      // Check if there's a profile image in session storage and set it
+      const storedImageUrl = sessionStorage.getItem("profileImage");
+      if (storedImageUrl) {
+        const profileImages = document.querySelectorAll("img.profileImage");
+        profileImages.forEach((img) => {
+          img.src = storedImageUrl;
+        });
+      }
     });
   </script>
 

@@ -9,7 +9,7 @@ import basicInfoRoutes from './routes/basicInfoRoutes.js';
 import educationRoutes from './routes/educationRoutes.js';
 import experienceRoutes from './routes/experienceRoutes.js';
 import pricingRoutes from './routes/pricingRoutes.js';
-import timeslotRoutes from './routes/timeslotRoutes.js';
+import timeslotRoutes from './routes/slotsRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 
 dotenv.config();
