@@ -296,9 +296,6 @@
                                 <option value="45">45 mins</option>
                                 <option value="30">30 mins</option>
                                 <option value="15">15 mins</option>
-                         
-                          
-                               
                               </select>
                             </div>
                           </div>
@@ -684,7 +681,6 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-
         const API = "https://portalserver-sepia.vercel.app";
         const slotscont = document.getElementById("slots");
 
@@ -708,13 +704,13 @@
         };
 
         const formatTime = (time) => {
-  const [hour, minute] = time.split(":").map(Number); 
-  const period = hour >= 12 ? "am" : "pm"; 
-  const formattedHour = hour % 12 || 12; 
-  return `${formattedHour.toString().padStart(2, "0")}:${minute
-    .toString()
-    .padStart(2, "0")} ${period}`;
-};
+          const [hour, minute] = time.split(":").map(Number);
+          const period = hour >= 12 ? "pm" : "am";
+          const formattedHour = hour % 12 || 12;
+          return `${formattedHour.toString().padStart(2, "0")}:${minute
+            .toString()
+            .padStart(2, "0")} ${period}`;
+        };
 
         const slots = generateTimeSlots(8, 17, 60);
         slots.forEach((slot) => {
@@ -758,7 +754,7 @@
               day_of_the_week: activeDay,
             };
 
-            fetch(API+"/timeslots/addslot", {
+            fetch(API + "/timeslots/addslot", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -808,7 +804,6 @@
 
             if (daySlots && daySlots.length > 0) {
               daySlots.forEach((slot) => {
-              
                 const slotElement = document.createElement("div");
                 slotElement.className = "doc-slot-list";
                 slotElement.textContent = slot.slot;
@@ -817,8 +812,7 @@
                 deleteIcon.className = "delete_schedule";
                 deleteIcon.innerHTML = '<i class="fa fa-times"></i>';
                 deleteIcon.addEventListener("click", () => {
-                  deleteSlot(slot.id)
-                 
+                  deleteSlot(slot.id);
                 });
                 slotElement.appendChild(deleteIcon);
                 slotsContainer.appendChild(slotElement);
@@ -830,37 +824,36 @@
           });
         }
         function deleteSlot(slotId) {
-
-
           const storedData = JSON.parse(localStorage.getItem("doc-data"));
-                  const userId = storedData?.profile?.UserID;
-              
+          const userId = storedData?.profile?.UserID;
 
-                  if (userId && slotId) {
-                  fetch(API+"/timeslots/slot", {
-                    method: "DELETE",
-                    headers: {
-                    "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ slotId }),
-                  })
-                    .then((response) => {
-                    if (!response.ok) {
-                      throw new Error("Failed to delete the slot");
-                    }
-                    return response.json();
-                    })
-                    .then((result) => {
-                    fetchSlots();
-                    alert("Slot deleted successfully!");
-                    })
-                    .catch((error) => {
-                    console.log("Error:", error);
-                    alert("Error deleting slot. Please try again.");
-                    });
-                  } else {
-                  alert("Something went wrong! Ensure all fields are filled correctly.");
-                  }
+          if (userId && slotId) {
+            fetch(API + "/timeslots/slot", {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ slotId }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Failed to delete the slot");
+                }
+                return response.json();
+              })
+              .then((result) => {
+                fetchSlots();
+                alert("Slot deleted successfully!");
+              })
+              .catch((error) => {
+                console.log("Error:", error);
+                alert("Error deleting slot. Please try again.");
+              });
+          } else {
+            alert(
+              "Something went wrong! Ensure all fields are filled correctly."
+            );
+          }
         }
         function fetchSlots() {
           const storedData = JSON.parse(localStorage.getItem("doc-data"));
