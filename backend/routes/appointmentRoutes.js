@@ -297,7 +297,23 @@ router.put("/status/:appointmentId", async (req, res) => {
       }
       });
     }
+    else if(status === "declined") {
+      const mailOptions = {
+      from: process.env.Email,
+      to: patientEmail,
+      subject: "Appointment declined",
+      text: `Your appointment is declined. Please contact the doctor for more information.`,
+      };
 
+      transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("Email sent:", info.response);
+      }
+      });
+
+    }
 
 
     
