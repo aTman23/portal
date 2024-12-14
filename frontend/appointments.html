@@ -200,7 +200,7 @@
 
 const updateAppointmentStatus = async (appointmentId, status) => {
   try {
-    const response = await fetch(`https://portalserver-sepia.vercel.app/appoint/status/${appointmentId}`, {
+    const response = await fetch(`http://localhost:5000/appoint/status/${appointmentId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

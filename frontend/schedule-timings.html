@@ -712,7 +712,7 @@
             .padStart(2, "0")} ${period}`;
         };
 
-        const slots = generateTimeSlots(8, 17, 60);
+        const slots = generateTimeSlots(1, 24, 60);
         slots.forEach((slot) => {
           const option = document.createElement("option");
           option.value = slot;
@@ -723,7 +723,7 @@
         const durationSelect = document.getElementById("duration");
         durationSelect.addEventListener("change", (e) => {
           slotscont.innerHTML = "";
-          const slots = generateTimeSlots(8, 17, parseInt(e.target.value));
+          const slots = generateTimeSlots(1, 24, parseInt(e.target.value));
           slots.forEach((slot) => {
             const option = document.createElement("option");
             option.value = slot;
