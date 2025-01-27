@@ -79,7 +79,7 @@ function validateUpiId(upild) {
 		// The UPI ID is now stored in localStorage within the profile data
 	  }
 	// Education Add More
-	
+	/*--
     $(".education-info").on('click','.trash', function () {
 		$(this).closest('.education-cont').remove();
 		return false;
@@ -116,9 +116,9 @@ function validateUpiId(upild) {
         $(".education-info").append(educationcontent);
         return false;
     });
-	
+	--*/
 	// Experience Add More
-	
+	/*---
     $("#experience-container").on('click','.trash', function () {
 		$(this).closest('.experience-info').remove();
 		return false;
@@ -194,7 +194,7 @@ function validateUpiId(upild) {
         $(".awards-info").append(regcontent);
         return false;
     });
-	
+	---*/
 	// Membership Add More
 	
     $(".membership-info").on('click','.trash', function () {
