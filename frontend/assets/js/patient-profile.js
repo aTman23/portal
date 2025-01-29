@@ -2,7 +2,7 @@ $(document).ready(function() {
     const patientId = /* Get logged-in patient's ID */ // Implement logic to get patient ID
 
     function fetchAppointments() {
-        $.get(`http://localhost:5000/appointments/patient/${patientId}`, function(data) {
+        $.get(`https://portalserver-sepia.vercel.app/patient/${patientId}`, function(data) {
             const appointments = data.appointments;
             $('#appointmentsTableBody').empty(); // Clear existing appointments
 
