@@ -475,4 +475,4 @@ $(".add-experience").on('click', function () {
 	
 	$("#experience-container").append(experiencecontent);
 	return false;
-})(jQuery);
+});
