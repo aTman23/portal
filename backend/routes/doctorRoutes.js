@@ -275,9 +275,10 @@ router.get("/d/:id", async (req, res) => {
 });
 
 
+
 // Route to update doctor profile details
 router.put(
-  "/update-profile/:userId", upload.single('profileImage'),async (req, res) => {
+  "/update-profile/:userId", upload.single('profileImage'), async (req, res) => {
     const userId = req.params.userId;
 
     // Extracting fields from request body
@@ -319,26 +320,30 @@ router.put(
         });
     }
 
-    const clinicImages = [null,null];
-    const userImage = req.file ? req.file.buffer : null;
+    const clinicImages = [null, null];
+    let userImage = null;
 
-  
+    // If a profile image is uploaded, set the image as userImage
+    if (req.file) {
+      userImage = req.file.buffer;
+    }
 
+    // If no new image is uploaded, we will not change the image, and it will remain the same.
     const profileQuery = `
-        UPDATE doc
-        SET Username = ?, Email = ?, FirstName = ?, LastName = ?, PhoneNumber = ?,
-            Gender = ?, DateOfBirth = ?, AboutMe = ?, Biography = ?, ClinicName = ?,
-            ClinicAddress = ?, AddressLine1 = ?, AddressLine2 = ?, City = ?, StateProvince = ?,
-            Country = ?, PostalCode = ?, PricingFree = ?, CustomPricePerHour = ?, 
-            ProfileImage = ?, ClinicImage1 = ?, ClinicImage2 = ?,upiId = ?
-        WHERE UserID = ?
+      UPDATE doc
+      SET Username = ?, Email = ?, FirstName = ?, LastName = ?, PhoneNumber = ?,
+          Gender = ?, DateOfBirth = ?, AboutMe = ?, Biography = ?, ClinicName = ?,
+          ClinicAddress = ?, AddressLine1 = ?, AddressLine2 = ?, City = ?, StateProvince = ?,
+          Country = ?, PostalCode = ?, PricingFree = ?, CustomPricePerHour = ?, 
+          ProfileImage = COALESCE(?, ProfileImage), ClinicImage1 = ?, ClinicImage2 = ?, upiId = ?
+      WHERE UserID = ?
     `;
 
     const connection = await pool.getConnection();
     try {
       await connection.beginTransaction();
 
-      // Execute profile update
+      // Execute profile update (only update image if new one is uploaded)
       await connection.query(profileQuery, [
         username,
         email,
@@ -359,7 +364,7 @@ router.put(
         postalCode,
         pricingFree,
         customPricePerHour,
-        userImage,
+        userImage,  // Update profile image if a new image is provided
         clinicImages[0],
         clinicImages[1],
         upiId,
@@ -378,8 +383,7 @@ router.put(
       if (education.length > 0) {
         const eduQuery = `
                 INSERT INTO education (UserID, Degree, CollegeInstitute, YearOfCompletion)
-                VALUES ?
-            `;
+                VALUES ?`;
         const eduValues = education.map(
           ({ degree, collegeInstitute, yearOfCompletion }) => [
             userId,
@@ -395,8 +399,7 @@ router.put(
       if (experience.length > 0) {
         const expQuery = `
                 INSERT INTO experience (UserID, HospitalName, FromDate, ToDate, Designation)
-                VALUES ?
-            `;
+                VALUES ?`;
         const expValues = experience.map(
           ({ hospitalName, fromDate, toDate, designation }) => [
             userId,
@@ -411,6 +414,7 @@ router.put(
 
       // Commit transaction and fetch updated user data
       await connection.commit();
+
       const profileQueryget = `
         SELECT 
             d.*,
@@ -428,23 +432,18 @@ router.put(
         LEFT JOIN 
             experience x ON d.UserID = x.UserID
         WHERE 
-            d.UserID = ?
-    `;
+            d.UserID = ?`;
 
       const [rows] = await pool.query(profileQueryget, [userId]);
-      // Process the result
       const result = {
-        profile: rows[0], // This will contain the user profile from the doc table
+        profile: rows[0],
         education: [],
         experience: [],
       };
 
-      // Check if rows are returned
       if (rows.length > 0) {
-        // Loop through the rows to gather education and experience
         rows.forEach((row) => {
           if (row.Degree) {
-            // Assuming Degree is a valid field in education
             result.education.push({
               Degree: row.Degree,
               CollegeInstitute: row.CollegeInstitute,
@@ -462,7 +461,7 @@ router.put(
         });
       }
 
-     return res.json({ message: "Profile fetched successfully", data: result });
+      return res.json({ message: "Profile updated successfully", data: result });
     } catch (error) {
       console.error("Update profile error:", error);
       await connection.rollback();
@@ -472,6 +471,7 @@ router.put(
     }
   }
 );
+
 
 router.post("/doctor/:doctorId/add-service", async (req, res) => {
   const { doctorId } = req.params;
