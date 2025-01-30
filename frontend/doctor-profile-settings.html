@@ -1033,7 +1033,7 @@
         console.log("🔄 Sending Data:", requestBody);
 
         // API Call
-        const response = await fetch(`https://portalserver-sepia.vercel.app/profile/education/edu`, {
+        const response = await fetch(`${API_BASE_URL}/profile/education/edu`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
@@ -1044,7 +1044,7 @@
 
         if (response.ok) {
             // Fetch updated profile data
-            const updatedProfileResponse = await fetch(`https://portalserver-sepia.vercel.app/doctors/profile/${userID}`);
+            const updatedProfileResponse = await fetch(`${API_BASE_URL}/doctors/profile/${userID}`);
             const updatedProfile = await updatedProfileResponse.json();
 
             if (updatedProfileResponse.ok) {
