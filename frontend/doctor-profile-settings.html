@@ -992,21 +992,17 @@
           () => (customPriceInput.style.display = "block")
         );
 
-    profileFormSave.addEventListener("click", async (e) => {
+      // Form submission handler
+      profileFormSave.addEventListener("click", async (e) => {
     e.preventDefault();
     try {
-        // Extract and filter duplicate YearOfCompletion values
         const educationData = Array.from(
             document.querySelectorAll("#education-container .education-info")
         ).map((education) => ({
             Degree: education.querySelector("[name='Degree']").value,
             CollegeInstitute: education.querySelector("[name='CollegeInstitute']").value,
-            YearOfCompletion: education.querySelector("[name='YearOfCompletion']").value,
+            YearOfCompletion: education.querySelector("[name='yearOfCompletion']").value,
         }));
-
-        const uniqueEducationData = Array.from(
-            new Map(educationData.map(obj => [obj.YearOfCompletion, obj])).values()
-        );
 
         const experienceData = Array.from(
             document.querySelectorAll("#experience-container .experience-info")
@@ -1018,7 +1014,7 @@
         }));
 
         const formData = new FormData(profileForm);
-        formData.append("education", JSON.stringify(uniqueEducationData));
+        formData.append("education", JSON.stringify(educationData));
         formData.append("experience", JSON.stringify(experienceData));
 
         const response = await fetch(
@@ -1028,20 +1024,26 @@
                 body: formData,
             }
         );
+        
+        if (!response.ok) {
+            throw new Error('Failed to update profile');
+        }
 
-        const data = await response.json();
+        
 
-        if (response.ok && data.success) {
+          const data = await response.json();
+
+          if (response.ok) {
             localStorage.setItem("doc-data", JSON.stringify(data.data));
             alert("Profile updated successfully!");
-        } else {
-            alert("Error updating profile: " + (data.error || "Unknown error"));
+          } else {
+            alert("Error updating profile: " + data.error);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred.");
         }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("An unexpected error occurred.");
-    }
-});
+      });
 
       // Function to add a tag (service or specialization)
       async function addTag(name, type) {
