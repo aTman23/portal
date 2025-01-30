@@ -994,43 +994,41 @@
 
       // Form submission handler
       profileFormSave.addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-        const educationData = Array.from(
+        e.preventDefault();
+        try {
+          const educationData = Array.from(
             document.querySelectorAll("#education-container .education-info")
-        ).map((education) => ({
-            Degree: education.querySelector("[name='Degree']").value,
-            CollegeInstitute: education.querySelector("[name='CollegeInstitute']").value,
-            YearOfCompletion: education.querySelector("[name='yearOfCompletion']").value,
-        }));
+          ).map((education) => ({
+            degree: education.querySelector("[name='degree']").value,
+            collegeInstitute: education.querySelector(
+              "[name='collegeInstitute']"
+            ).value,
+            yearOfCompletion: education.querySelector(
+              "[name='yearOfCompletion']"
+            ).value,
+          }));
 
-        const experienceData = Array.from(
+          const experienceData = Array.from(
             document.querySelectorAll("#experience-container .experience-info")
-        ).map((experience) => ({
-            hospitalName: experience.querySelector("[name='hospitalName']").value,
+          ).map((experience) => ({
+            hospitalName: experience.querySelector("[name='hospitalName']")
+              .value,
             fromDate: experience.querySelector("[name='fromDate']").value,
             toDate: experience.querySelector("[name='toDate']").value,
             designation: experience.querySelector("[name='designation']").value,
-        }));
+          }));
 
-        const formData = new FormData(profileForm);
-        formData.append("education", JSON.stringify(educationData));
-        formData.append("experience", JSON.stringify(experienceData));
+          const formData = new FormData(profileForm);
+          formData.append("education", JSON.stringify(educationData));
+          formData.append("experience", JSON.stringify(experienceData));
 
-        const response = await fetch(
+          const response = await fetch(
             `${API_BASE_URL}/doctors/update-profile/${storedData.profile.UserID}`,
             {
-                method: "PUT",
-                body: formData,
+              method: "PUT",
+              body: formData,
             }
-        );
-        
-        if (!response.ok) {
-            throw new Error('Failed to update profile');
-        }
-
-        
-
+          );
           const data = await response.json();
 
           if (response.ok) {
