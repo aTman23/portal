@@ -994,75 +994,54 @@
 
       // Form submission handler
       profileFormSave.addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-        const storedData = JSON.parse(localStorage.getItem("doc-data"));
-        const userID = storedData?.profile?.UserID;
+        e.preventDefault();
+        try {
+          const educationData = Array.from(
+            document.querySelectorAll("#education-container .education-info")
+          ).map((education) => ({
+            degree: education.querySelector("[name='degree']").value,
+            collegeInstitute: education.querySelector(
+              "[name='collegeInstitute']"
+            ).value,
+            yearOfCompletion: education.querySelector(
+              "[name='yearOfCompletion']"
+            ).value,
+          }));
 
-        if (!userID) {
-            alert("User ID not found. Please log in again.");
-            return;
-        }
+          const experienceData = Array.from(
+            document.querySelectorAll("#experience-container .experience-info")
+          ).map((experience) => ({
+            hospitalName: experience.querySelector("[name='hospitalName']")
+              .value,
+            fromDate: experience.querySelector("[name='fromDate']").value,
+            toDate: experience.querySelector("[name='toDate']").value,
+            designation: experience.querySelector("[name='designation']").value,
+          }));
 
-        // Get existing education records from localStorage (if available)
-        let existingEducationRecords = storedData?.profile?.educationRecords || [];
+          const formData = new FormData(profileForm);
+          formData.append("education", JSON.stringify(educationData));
+          formData.append("experience", JSON.stringify(experienceData));
 
-        // Collect new education data
-        const newEducationData = Array.from(document.querySelectorAll("#education-container .education-cont"))
-            .map((education) => ({
-                Degree: education.querySelector("[name='degree']").value.trim(),
-                CollegeInstitute: education.querySelector("[name='collegeInstitute']").value.trim(),
-                YearOfCompletion: education.querySelector("[name='yearOfCompletion']").value.trim()
-            }))
-            .filter(record => record.Degree && record.CollegeInstitute && record.YearOfCompletion);
-
-        if (newEducationData.length === 0) {
-            alert("Please add at least one valid education record.");
-            return;
-        }
-
-        // Combine existing and new education records
-        const updatedEducationRecords = [...existingEducationRecords, ...newEducationData];
-
-        // Prepare request body
-        const requestBody = {
-            UserID: userID,
-            educationRecords: updatedEducationRecords
-        };
-
-        console.log("🔄 Sending Data:", requestBody);
-
-        // API Call
-        const response = await fetch(`${API_BASE_URL}/profile/education/edu`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestBody)
-        });
-
-        const result = await response.json();
-        console.log("✅ Server Response:", result);
-
-        if (response.ok) {
-            // Fetch updated profile data
-            const updatedProfileResponse = await fetch(`${API_BASE_URL}/doctors/profile/${userID}`);
-            const updatedProfile = await updatedProfileResponse.json();
-
-            if (updatedProfileResponse.ok) {
-                // Store updated data in localStorage
-                localStorage.setItem("doc-data", JSON.stringify(updatedProfile.data));
-                alert("Education details saved successfully!");
-                window.location.reload(); // Refresh page to reflect changes
-            } else {
-                alert("Profile updated, but failed to refresh data.");
+          const response = await fetch(
+            `${API_BASE_URL}/doctors/update-profile/${storedData.profile.UserID}`,
+            {
+              method: "PUT",
+              body: formData,
             }
-        } else {
-            alert("Error saving education details: " + result.error);
+          );
+          const data = await response.json();
+
+          if (response.ok) {
+            localStorage.setItem("doc-data", JSON.stringify(data.data));
+            alert("Profile updated successfully!");
+          } else {
+            alert("Error updating profile: " + data.error);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An unexpected error occurred.");
         }
-    } catch (error) {
-        console.error("❌ Error:", error);
-        alert("An unexpected error occurred.");
-    }
-});
+      });
 
       // Function to add a tag (service or specialization)
       async function addTag(name, type) {
