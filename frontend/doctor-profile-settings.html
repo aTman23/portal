@@ -996,7 +996,6 @@
       profileFormSave.addEventListener("click", async (e) => {
     e.preventDefault();
     try {
-        // Get user ID from localStorage
         const storedData = JSON.parse(localStorage.getItem("doc-data"));
         const userID = storedData?.profile?.UserID;
 
@@ -1005,8 +1004,11 @@
             return;
         }
 
-        // Collect Education Data
-        const educationData = Array.from(document.querySelectorAll("#education-container .education-cont"))
+        // Get existing education records from localStorage (if available)
+        let existingEducationRecords = storedData?.profile?.educationRecords || [];
+
+        // Collect new education data
+        const newEducationData = Array.from(document.querySelectorAll("#education-container .education-cont"))
             .map((education) => ({
                 Degree: education.querySelector("[name='degree']").value.trim(),
                 CollegeInstitute: education.querySelector("[name='collegeInstitute']").value.trim(),
@@ -1014,21 +1016,24 @@
             }))
             .filter(record => record.Degree && record.CollegeInstitute && record.YearOfCompletion);
 
-        if (educationData.length === 0) {
+        if (newEducationData.length === 0) {
             alert("Please add at least one valid education record.");
             return;
         }
 
-        // Prepare request body (Fix: Send JSON instead of FormData)
+        // Combine existing and new education records
+        const updatedEducationRecords = [...existingEducationRecords, ...newEducationData];
+
+        // Prepare request body
         const requestBody = {
             UserID: userID,
-            educationRecords: educationData
+            educationRecords: updatedEducationRecords
         };
 
         console.log("🔄 Sending Data:", requestBody);
 
-        // **Fixed API Call**
-        const response = await fetch(`${API_BASE_URL}/profile/education/edu`, {
+        // API Call
+        const response = await fetch(`https://portalserver-sepia.vercel.app/profile/education/edu`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(requestBody)
@@ -1038,12 +1043,12 @@
         console.log("✅ Server Response:", result);
 
         if (response.ok) {
-            // **Re-fetch Updated Profile Data**
-            const updatedProfileResponse = await fetch(`${API_BASE_URL}/doctors/profile/${userID}`);
+            // Fetch updated profile data
+            const updatedProfileResponse = await fetch(`https://portalserver-sepia.vercel.app/doctors/profile/${userID}`);
             const updatedProfile = await updatedProfileResponse.json();
 
             if (updatedProfileResponse.ok) {
-                // **Store Updated Data in LocalStorage**
+                // Store updated data in localStorage
                 localStorage.setItem("doc-data", JSON.stringify(updatedProfile.data));
                 alert("Education details saved successfully!");
                 window.location.reload(); // Refresh page to reflect changes
@@ -1058,7 +1063,6 @@
         alert("An unexpected error occurred.");
     }
 });
-
 
       // Function to add a tag (service or specialization)
       async function addTag(name, type) {
