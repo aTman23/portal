@@ -40,19 +40,21 @@
       const selectedTime = convertTo24Hour(urlParams.get("time").substring(0,8));
    
       const Loc = urlParams.get("Loc");
-
       function convertTo24Hour(time) {
+    let [hours, minutes] = time.match(/\d+/g); 
+    let isPM = time.toLowerCase().includes("pm");
+    let isAM = time.toLowerCase().includes("am");
 
-        var hours = parseInt(time.substr(0, 2));
-        if (time.indexOf("am") != -1 && hours == 12) {
-          time = time.replace("12", "0");
-        }
-        if (time.indexOf("pm") != -1 && hours < 12) {
-          time = time.replace(hours, hours + 12);
-        }
-        return time.replace(/( am| pm)/, "");
-      }
+    hours = parseInt(hours, 10);
 
+    if (isAM && hours === 12) {
+        hours = 0; 
+    } else if (isPM && hours < 12) {
+        hours += 12; 
+    }
+
+    return `${String(hours).padStart(2, "0")}:${minutes}`; // Ensure two-digit format
+}
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("name").textContent = DocName;
         document.getElementById("loc").textContent = Loc;
