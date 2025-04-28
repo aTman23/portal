@@ -2,7 +2,7 @@ const startDate = new Date();
 const daySlotsContainer = document.getElementById("day-slots");
 const timeIntervals = [];
 
-console.log(${API});
+console.log(`${API}`);
 var slot_data = {};
 function fetchSlots(userId) {
   if (userId) {
