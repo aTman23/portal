@@ -2,7 +2,7 @@ const startDate = new Date();
 const daySlotsContainer = document.getElementById("day-slots");
 const timeSlotsContainer = document.getElementById("time-slots");
 const dayDates = [];
-var slot_data = {};
+let slot_data = {};
 const daysOfWeek = [
   "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 ];
@@ -65,11 +65,13 @@ for (let i = 0; i < 7; i++) {
   daySlotsContainer.appendChild(daySlot);
 }
 
+// Format time slot
 function formatTimeSlot(startTime, endTime) {
   const options = { hour: '2-digit', minute: '2-digit', hour12: true };
   return `${new Date(startTime).toLocaleTimeString("en-US", options)} - ${new Date(endTime).toLocaleTimeString("en-US", options)}`;
 }
 
+// Remove duplicates from slots
 function removeDuplicates(slots) {
   const seen = new Set();
   return slots.filter(slot => {
@@ -79,6 +81,7 @@ function removeDuplicates(slots) {
   });
 }
 
+// Sort time slots
 function sortSlots(slots) {
   return slots.sort((a, b) => {
     const [aStart] = a.split(" - ");
@@ -89,6 +92,7 @@ function sortSlots(slots) {
   });
 }
 
+// Display slots
 function displaySlots(data) {
   timeSlotsContainer.innerHTML = "";
 
