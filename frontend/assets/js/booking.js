@@ -122,6 +122,7 @@ function displaySlots(data) {
         });
       }
 
+      // Check if the time slot matches the selected time
       if (formattedSlotDate === selectedDate && time.slot === selectedTime) {
         timeLink.classList.add("active");
       }
@@ -129,6 +130,8 @@ function displaySlots(data) {
       timeLink.innerHTML = `<span>${time.slot}</span>`;
       timeSlotList.appendChild(timeLink);
     });
+
+    // If no slots are available for the day
     if (data[week] === undefined || data[week]?.length === 0) {
       timeSlotList.innerHTML = `<a class="timing"><span >No slots available</span></a>`;
     }
