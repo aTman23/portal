@@ -59,55 +59,61 @@ const daysOfWeek = [
   "Saturday",
   "Sunday",
 ];
-
 function displaySlots(data) {
+  const displayedSlots = new Set(); // To track already shown slots
+  timeSlotsContainer.innerHTML = ""; // Clear previous slots
+
   for (let j = 0; j < 7; j++) {
     const currentDate = dayDates[j];
-    const week = currentDate.toLocaleString("en-US", {
-      weekday: "long",
-    });
+    const week = currentDate.toLocaleString("en-US", { weekday: "long" });
     const timeSlotList = document.createElement("li");
 
-    data[week]?.forEach((time) => {
-      const timeLink = document.createElement("a");
-      timeLink.classList.add("timing");
-      timeLink.href = "#";
+    if (data[week] === undefined || data[week].length === 0) {
+      timeSlotList.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
+    } else {
+      data[week].forEach((time) => {
+        const slotLabel = `${time.slot}`;
 
-      const [hour, minute] = time.slot.substring(0, 5).split(":");
-      const slotTime = new Date(dayDates[j]);
-      slotTime.setHours(hour, minute);
+        // Skip duplicates
+        if (displayedSlots.has(slotLabel)) return;
+        displayedSlots.add(slotLabel);
 
-      const formattedSlotDate = `${slotTime.getFullYear()}-${String(
-        slotTime.getMonth() + 1
-      ).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
+        const timeLink = document.createElement("a");
+        timeLink.classList.add("timing");
+        timeLink.href = "#";
+        timeLink.innerHTML = `<span>${slotLabel}</span>`;
 
-      if (slotTime < new Date()) {
-        timeLink.classList.add("disabled");
-        timeLink.setAttribute("aria-disabled", "true");
-        timeLink.style.pointerEvents = "none";
-      } else {
-        timeLink.addEventListener("click", () => {
-          const dateStr = formattedSlotDate;
-          const timeStr = time.slot;
+        const [hour, minute] = slotLabel.substring(0, 5).split(":");
+        const slotTime = new Date(currentDate);
+        slotTime.setHours(hour, minute);
 
-          const newSearchParams = new URLSearchParams(window.location.search);
-          newSearchParams.set("date", dateStr);
-          newSearchParams.set("time", timeStr);
+        const formattedSlotDate = `${slotTime.getFullYear()}-${String(
+          slotTime.getMonth() + 1
+        ).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
 
-          window.location.search = newSearchParams.toString();
-        });
-      }
+        if (slotTime < new Date()) {
+          timeLink.classList.add("disabled");
+          timeLink.setAttribute("aria-disabled", "true");
+          timeLink.style.pointerEvents = "none";
+        } else {
+          timeLink.addEventListener("click", () => {
+            const dateStr = formattedSlotDate;
+            const timeStr = time.slot;
 
-      if (formattedSlotDate === selectedDate && time.slot === selectedTime) {
-        timeLink.classList.add("active");
-      }
+            const newSearchParams = new URLSearchParams(window.location.search);
+            newSearchParams.set("date", dateStr);
+            newSearchParams.set("time", timeStr);
 
-      timeLink.innerHTML = `<span>${time.slot}</span>`;
-      timeSlotList.appendChild(timeLink);
-    });
-    if (data[week] === undefined || data[week]?.length === 0) {
-      timeSlotList.innerHTML = `<a class="timing"><span >No slots available</span></a>`;
+            window.location.search = newSearchParams.toString();
+          });
+        }
 
+        if (formattedSlotDate === selectedDate && time.slot === selectedTime) {
+          timeLink.classList.add("active");
+        }
+
+        timeSlotList.appendChild(timeLink);
+      });
     }
 
     timeSlotsContainer.appendChild(timeSlotList);
