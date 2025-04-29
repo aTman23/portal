@@ -19,6 +19,7 @@ function fetchSlots(userId) {
 if (DoctorId) {
   fetchSlots(DoctorId);
 }
+
 const dayDates = [];
 
 for (let i = 0; i < 7; i++) {
@@ -32,7 +33,7 @@ for (let i = 0; i < 7; i++) {
     currentDay.getMonth() + 1
   ).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
 
-  daySlot.innerHTML = `
+  daySlot.innerHTML = `  
     <span>${currentDay.toLocaleString("en-US", { weekday: "long" })}</span>
     <span class="slot-date">
       ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", {
@@ -41,6 +42,22 @@ for (let i = 0; i < 7; i++) {
       <small class="slot-year">${currentDay.getFullYear()}</small>
     </span>
   `;
+
+  // Add a click event to each day slot for selection
+  daySlot.addEventListener("click", () => {
+    // Deselect all days
+    const allDays = daySlotsContainer.querySelectorAll("li");
+    allDays.forEach((slot) => slot.classList.remove("active"));
+
+    // Mark the selected day as active
+    daySlot.classList.add("active");
+
+    // Set the selected date in the URL
+    const selectedDayDate = formattedDate;
+    const newSearchParams = new URLSearchParams(window.location.search);
+    newSearchParams.set("date", selectedDayDate);
+    window.location.search = newSearchParams.toString();
+  });
 
   if (formattedDate === selectedDate) {
     daySlot.classList.add("active");
@@ -81,19 +98,26 @@ function displaySlots(data) {
         slotTime.getMonth() + 1
       ).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
 
+      // Disable past slots
       if (slotTime < new Date()) {
         timeLink.classList.add("disabled");
         timeLink.setAttribute("aria-disabled", "true");
         timeLink.style.pointerEvents = "none";
       } else {
+        // Add event listener to select a time slot
         timeLink.addEventListener("click", () => {
-          const dateStr = formattedSlotDate;
-          const timeStr = time.slot;
+          const selectedTime = time.slot;
 
+          // Deselect all time slots
+          const allTimeSlots = timeSlotsContainer.querySelectorAll("a");
+          allTimeSlots.forEach((slot) => slot.classList.remove("active"));
+
+          // Mark the selected time slot as active
+          timeLink.classList.add("active");
+
+          // Set the selected time in the URL
           const newSearchParams = new URLSearchParams(window.location.search);
-          newSearchParams.set("date", dateStr);
-          newSearchParams.set("time", timeStr);
-
+          newSearchParams.set("time", selectedTime);
           window.location.search = newSearchParams.toString();
         });
       }
@@ -107,7 +131,6 @@ function displaySlots(data) {
     });
     if (data[week] === undefined || data[week]?.length === 0) {
       timeSlotList.innerHTML = `<a class="timing"><span >No slots available</span></a>`;
-
     }
 
     timeSlotsContainer.appendChild(timeSlotList);
