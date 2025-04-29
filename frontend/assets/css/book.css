@@ -1,0 +1,570 @@
+:root {
+    --primary: #A63A50;      /* Deep raspberry */
+    --secondary: #F0E7D8;    /* Cream/off-white */
+    --neutral: #AB9B96;      /* Taupe */
+    --accent: #A1674A;       /* Sienna brown */
+    --accent-light: #BA6E6E; /* Muted rose */
+    --text-dark: #2c2c2c;
+    --text-medium: #555555;
+    --text-light: #ffffff;
+    --shadow-color: rgba(166, 58, 80, 0.15);
+  
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+  
+    --radius-sm: 0.5rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+    --radius-full: 9999px;
+  }
+  
+  /* Animations */
+  @keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #fdf6f1;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  
+  
+  /* 🏆 Navbar Styles */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 5%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
+    background-color: #fdf6f1;
+  }
+  
+  /* 🏆 Logo */
+  .navbar .logo img {
+    width: 80px;
+    height: auto;
+    object-fit: contain;
+    margin-left: 0; /* Logo stays on the left */
+  }
+  
+  /* 🏆 Default Navigation Links (Desktop) */
+  nav {
+    display: flex;
+    gap: 20px;
+  }
+  
+  /* 🏆 Navigation Links Styling */
+  nav a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #333;
+    font-weight: 500;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+  }
+  nav a:not(.logo-link)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background: #a63a50;
+    transition: width 0.3s ease-in-out;
+  }
+  
+  nav a:not(.logo-link):hover::after {
+    width: 100%;
+  }
+  /* ✅ Hamburger Menu */
+  .menu-toggle {
+    display: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #c62b56;
+    margin-left: auto; /* Ensures the menu stays on the right */
+  }
+  
+  /* 📱 Responsive Design */
+  @media (max-width: 768px) {
+    .navbar {
+      padding: 10px 5%;
+      flex-direction: row; /* Ensures logo and menu toggle stay in the same row */
+    }
+  
+    /* 🏆 Logo for Mobile */
+    .navbar .logo img {
+      width: 70px;
+    }
+  
+    /* 🏆 Full-Screen Navigation */
+    nav {
+      display: none;
+      flex-direction: column;
+      background: #fdf8f1;
+      padding: 12px 36px;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 90%;
+      z-index: 100;
+      border-top: 1px solid #ffd9a5;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  
+    /* 🏆 Active Menu */
+    nav.show {
+      display: flex;
+    }
+  
+    /* 🏆 Navigation Links (Mobile) */
+    nav a {
+      font-size: 20px;
+      color: #000;
+      font-weight: 500;
+      padding: 12px 0;
+      text-decoration: none;
+      transition: color 0.3s ease-in-out;
+    }
+  
+    /* ✅ Hover effect */
+    nav a:hover {
+      color: #ff4757;
+    }
+  
+    /* ✅ Hamburger Menu Visible on Mobile */
+    .menu-toggle {
+      display: block;
+      font-size: 28px;
+      margin-left: auto;
+    }
+  }
+  
+  /* 📱 Smaller Screens */
+  @media (max-width: 480px) {
+    .navbar {
+      padding: 8px 5%;
+      flex-direction: row;
+    }
+  
+    nav {
+      gap: 15px;
+      padding: 24px;
+    }
+  
+    nav a {
+      font-size: 18px;
+    }
+  
+    /* 🏆 Adjust Logo Size */
+    .navbar .logo img {
+      width: 60px;
+    }
+  
+    /* 🏆 Hamburger Menu Spacing */
+    .menu-toggle {
+      font-size: 28px;
+      margin-right: 0;
+    }
+  }
+  
+  
+  .contact-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  }
+  
+  .contact-email, .contact-phone {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  transition: opacity 0.3s ease;
+  }
+  /* Breadcrumb */
+  /* Header Styles */
+  .header {
+    text-align: center;
+    padding: 1rem 1rem;
+    background: #A63A51;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Layer 1 */
+  .header::before,
+  .header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(135deg, #c62b56, #f97c94, #ffd1dc);
+    background-size: 300% 300%;
+    z-index: -1;
+    animation: moveGradient 10s infinite alternate;
+    opacity: 0.6;
+    mix-blend-mode: screen;
+  }
+  
+  /* Layer 2 - Opposite Movement */
+  .header::after {
+    background: radial-gradient(circle, #c62b56 20%, #f97c94 60%, #ffd1dc 100%);
+    animation: moveGradientReverse 12s infinite alternate;
+    opacity: 0.5;
+  }
+  
+  /* Gradient Movement */
+  @keyframes moveGradient {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      background-position: 0% 50%;
+    }
+    50% {
+      transform: translate(-20%, -20%) rotate(180deg);
+      background-position: 100% 50%;
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg);
+      background-position: 0% 50%;
+    }
+  }
+  
+  /* Reverse Movement */
+  @keyframes moveGradientReverse {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+      background-position: 50% 0%;
+    }
+    50% {
+      transform: translate(20%, 20%) rotate(-180deg);
+      background-position: 50% 100%;
+    }
+    100% {
+      transform: translate(0, 0) rotate(-360deg);
+      background-position: 50% 0%;
+    }
+  }
+  
+  /* Optional: Hover Effect for More Glow */
+  .header:hover::before,
+  .header:hover::after {
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+  }
+  
+  /* Header Span Styles */
+  .header span {
+    color: #ffffff;
+    font-family: 'Elsie Swash Caps', cursive;
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-underline-offset: 8px;
+    text-decoration-thickness: 2.5px;
+    white-space: normal; /* Allows text to break and wrap */
+    word-wrap: break-word; /* Breaks long words to fit */
+    width: 100%; /* Ensures the span takes up full available width */
+  }
+  
+  
+  
+  
+  /* Doctor Card */
+  .card {
+    background: rgba(255, 255, 255, 0.9); /* Slightly stronger white */
+    backdrop-filter: blur(6px); /* Little lighter blur */
+    border-radius: var(--radius-md); /* Smaller curve */
+    box-shadow: 0 4px 20px var(--shadow-color); /* Softer shadow */
+    overflow: hidden;
+    margin: 0.5rem 0; /* Very small margin */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    padding: 0.8rem 1.2rem; /* Tight padding inside */
+    max-width: 100%; /* Take full width of container */
+  }
+  
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px var(--shadow-color);
+  }
+  
+  /* Booking Doc Info */
+  .booking-doc-info {
+    animation: none; /* Remove unnecessary pulsing if you want compact look */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  /* Doctor Image */
+  .booking-doc-img img {
+    width: 80px; /* reduced from 120px */
+    height: 80px;
+    border-radius: var(--radius-full);
+    border: 3px solid var(--accent-light);
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .booking-doc-img img:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Doctor Info */
+  .booking-info h4 a {
+    color: var(--primary);
+    font-size: 1rem; /* smaller font */
+    font-weight: 600;
+  }
+  
+  /* Schedule Widget */
+  .booking-schedule {
+    background: var(--text-light);
+    border-radius: var(--radius-md); /* smaller curve */
+    overflow: hidden;
+    margin: 1rem 0; /* reduced margin */
+    position: relative;
+    padding: 0.5rem; /* add small padding */
+  }
+  
+  .booking-schedule::before,
+  .booking-schedule::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 10px; /* reduced wavy border height */
+    background-size: 20px 20px;
+  }
+  
+  .booking-schedule::before {
+    top: -2px;
+    background-image: radial-gradient(circle at 10px 15px, transparent 10px, var(--primary) 11px);
+  }
+  
+  .booking-schedule::after {
+    bottom: -2px;
+    background-image: radial-gradient(circle at 10px -5px, transparent 10px, var(--secondary) 11px);
+  }
+  
+  /* Day and Time Slots Container */
+  .day-slot ul, .time-slot ul {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: 0.5rem; /* closer items */
+    padding: 0.8rem;
+    list-style: none;
+    margin: 0.5rem 0; /* smaller margin */
+    scrollbar-width: thin;
+  }
+  
+  /* Scrollbar */
+  .day-slot ul::-webkit-scrollbar, .time-slot ul::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .day-slot ul::-webkit-scrollbar-thumb, .time-slot ul::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: var(--radius-full);
+  }
+  
+  /* Each Day/Time Box */
+  .day-slot li, .time-slot li {
+    background: var(--secondary);
+    padding: 0.8rem 1.2rem; /* slightly bigger buttons */
+    border-radius: var(--radius-md);
+    text-align: center;
+    min-width: 120px; /* increased width */
+    font-size: 0.9rem; /* smaller text */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  
+  .day-slot li:hover, .time-slot li:hover {
+    background: var(--accent);
+    color: var(--text-light);
+    transform: translateY(-2px);
+  }
+  
+  .day-slot li.active, .time-slot li a.active {
+    background: var(--primary);
+    color: var(--text-light);
+    transform: translateY(-2px);
+    font-weight: bold;
+  }
+  
+  /* Book Button */
+  .submit-section {
+    text-align: center;
+    margin: 0.5rem 0; /* Reduce top and bottom margins */
+    padding-bottom: 0; /* Remove extra padding if any */
+  }
+  
+  /* Button */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--text-light);
+    padding: 0.5rem 1rem; /* Button size a little tighter */
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    transition: all 0.3s ease;
+    font-size: 1rem;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+    animation: pulse 1s infinite alternate;
+  }
+  .btn-primary.disabled {
+    background: var(--neutral);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .content {
+    margin-bottom: 0; /* No big margin bottom */
+  }
+  /* Footer */
+  .footer {
+    background: linear-gradient(135deg, var(--accent), var(--primary));
+    color: var(--text-light);
+    padding-top: 1rem; /* reduced */
+    position: relative;
+    margin-top: 1rem; /* reduced margin */
+  }
+  
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 100%;
+    height: 10px; /* smaller wave */
+    background-image: radial-gradient(circle at 10px 15px, transparent 10px, var(--secondary) 11px);
+    background-size: 20px 20px;
+  }
+  
+  .footer-top {
+    padding-bottom: 1rem; /* smaller padding */
+  }
+  
+  /* Flex layout for footer */
+  .footer-top .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .footer-widget {
+    flex: 1 1 auto; /* all widgets share space */
+    min-width: 200px;
+    padding: 0.5rem;
+  }
+  
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .footer-links button {
+    background: #c8c7c7;
+    border: none;
+    padding: 10px 6px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  
+  
+  
+  /* Medium Devices (Tablets and Smaller Desktops) */
+  @media (max-width: 1024px) {
+    .footer-links {
+        justify-content: center;
+    }
+  }
+  
+  /* Small Devices (Tablets and Larger Phones) */
+  @media (max-width: 768px) {
+    .footer-links {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+  }
+  
+  /* Extra Small Devices (Mobile Phones) */
+  @media (max-width: 480px) {
+    .footer-links {
+        gap: 10px;
+    }
+  
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 991px) {
+  .contact-info {
+    display: none;
+  }
+  .day-slot ul, .time-slot ul {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  }
+  
+  @media (max-width: 768px) {
+  .booking-doc-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  .booking-doc-img {
+    margin-bottom: var(--spacing-md);
+  }
+  .booking-doc-img img {
+    width: 100px;
+    height: 100px;
+  }
+  }
+  
+  @media (max-width: 480px) {
+  .breadcrumb-title {
+    font-size: 1.5rem;
+  }
+  .booking-info h4 a {
+    font-size: 1.2rem;
+  }
+  .day-slot ul, .time-slot ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .btn-primary {
+    padding: var(--spacing-sm) var(--spacing-lg);
+  }
+  }
+  
