@@ -60,62 +60,58 @@ const daysOfWeek = [
   "Sunday",
 ];
 function displaySlots(data) {
-  const displayedSlots = new Set(); // To track already shown slots
+  const displayedSlots = new Set(); // To track shown slots
   timeSlotsContainer.innerHTML = ""; // Clear previous slots
 
-  for (let j = 0; j < 7; j++) {
-    const currentDate = dayDates[j];
-    const week = currentDate.toLocaleString("en-US", { weekday: "long" });
-    const timeSlotList = document.createElement("li");
+  const selectedDay = new Date(selectedDate).toLocaleString("en-US", { weekday: "long" });
+  const selectedDaySlots = data[selectedDay];
 
-    if (data[week] === undefined || data[week].length === 0) {
-      timeSlotList.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
+  if (!selectedDaySlots || selectedDaySlots.length === 0) {
+    const noSlotItem = document.createElement("li");
+    noSlotItem.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
+    timeSlotsContainer.appendChild(noSlotItem);
+    return;
+  }
+
+  selectedDaySlots.forEach((time) => {
+    const slotLabel = time.slot;
+
+    // Skip duplicates
+    if (displayedSlots.has(slotLabel)) return;
+    displayedSlots.add(slotLabel);
+
+    const timeItem = document.createElement("li"); // Create new <li>
+    const timeLink = document.createElement("a");
+    timeLink.classList.add("timing");
+    timeLink.href = "#";
+    timeLink.innerHTML = `<span>${slotLabel}</span>`;
+
+    const [hour, minute] = slotLabel.substring(0, 5).split(":");
+    const slotTime = new Date(selectedDate);
+    slotTime.setHours(hour, minute);
+
+    if (slotTime < new Date()) {
+      timeLink.classList.add("disabled");
+      timeLink.setAttribute("aria-disabled", "true");
+      timeLink.style.pointerEvents = "none";
     } else {
-      data[week].forEach((time) => {
-        const slotLabel = `${time.slot}`;
+      timeLink.addEventListener("click", () => {
+        const dateStr = selectedDate;
+        const timeStr = time.slot;
 
-        // Skip duplicates
-        if (displayedSlots.has(slotLabel)) return;
-        displayedSlots.add(slotLabel);
+        const newSearchParams = new URLSearchParams(window.location.search);
+        newSearchParams.set("date", dateStr);
+        newSearchParams.set("time", timeStr);
 
-        const timeLink = document.createElement("a");
-        timeLink.classList.add("timing");
-        timeLink.href = "#";
-        timeLink.innerHTML = `<span>${slotLabel}</span>`;
-
-        const [hour, minute] = slotLabel.substring(0, 5).split(":");
-        const slotTime = new Date(currentDate);
-        slotTime.setHours(hour, minute);
-
-        const formattedSlotDate = `${slotTime.getFullYear()}-${String(
-          slotTime.getMonth() + 1
-        ).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
-
-        if (slotTime < new Date()) {
-          timeLink.classList.add("disabled");
-          timeLink.setAttribute("aria-disabled", "true");
-          timeLink.style.pointerEvents = "none";
-        } else {
-          timeLink.addEventListener("click", () => {
-            const dateStr = formattedSlotDate;
-            const timeStr = time.slot;
-
-            const newSearchParams = new URLSearchParams(window.location.search);
-            newSearchParams.set("date", dateStr);
-            newSearchParams.set("time", timeStr);
-
-            window.location.search = newSearchParams.toString();
-          });
-        }
-
-        if (formattedSlotDate === selectedDate && time.slot === selectedTime) {
-          timeLink.classList.add("active");
-        }
-
-        timeSlotList.appendChild(timeLink);
+        window.location.search = newSearchParams.toString();
       });
     }
 
-    timeSlotsContainer.appendChild(timeSlotList);
-  }
+    if (selectedDate === selectedDate && time.slot === selectedTime) {
+      timeLink.classList.add("active");
+    }
+
+    timeItem.appendChild(timeLink);
+    timeSlotsContainer.appendChild(timeItem);
+  });
 }
