@@ -1,14 +1,17 @@
 const startDate = new Date();
 const daySlotsContainer = document.getElementById("day-slots");
-const timeIntervals = [];
+const timeSlotsContainer = document.getElementById("time-slots");
+let selectedDate = ""; // Will be set on day click
+let selectedTime = ""; // Optional: used to highlight selected time
+let slot_data = {}; // Will hold all 7 days of slot data
 
-var slot_data = {};
+// Fetch weekly slots for doctor and store globally
 function fetchSlots(userId) {
   if (userId) {
     fetch(`${API}/timeslots/week?userId=${userId}`)
       .then((response) => response.json())
       .then((data) => {
-        displaySlots(data.slots);
+        slot_data = data.slots; // Save for later use
       })
       .catch((error) => {
         console.error("Error fetching slots:", error);
@@ -19,6 +22,8 @@ function fetchSlots(userId) {
 if (DoctorId) {
   fetchSlots(DoctorId);
 }
+
+// Generate 7-day clickable list
 const dayDates = [];
 
 for (let i = 0; i < 7; i++) {
@@ -42,26 +47,28 @@ for (let i = 0; i < 7; i++) {
     </span>
   `;
 
-  if (formattedDate === selectedDate) {
+  // Add click event for day selection
+  daySlot.addEventListener("click", () => {
+    // Clear active class from all
+    document.querySelectorAll("#day-slots li").forEach((li) => {
+      li.classList.remove("active");
+    });
     daySlot.classList.add("active");
-  }
+
+    // Update selected date
+    selectedDate = formattedDate;
+
+    // Clear and show slots for selected day
+    displaySlots(slot_data);
+  });
 
   daySlotsContainer.appendChild(daySlot);
 }
 
-const timeSlotsContainer = document.getElementById("time-slots");
-const daysOfWeek = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
+// Main slot rendering function
 function displaySlots(data) {
-  const displayedSlots = new Set(); // To track shown slots
-  timeSlotsContainer.innerHTML = ""; // Clear previous slots
+  const displayedSlots = new Set();
+  timeSlotsContainer.innerHTML = ""; // Clear old
 
   const selectedDay = new Date(selectedDate).toLocaleString("en-US", { weekday: "long" });
   const selectedDaySlots = data[selectedDay];
@@ -75,12 +82,10 @@ function displaySlots(data) {
 
   selectedDaySlots.forEach((time) => {
     const slotLabel = time.slot;
-
-    // Skip duplicates
     if (displayedSlots.has(slotLabel)) return;
     displayedSlots.add(slotLabel);
 
-    const timeItem = document.createElement("li"); // Create new <li>
+    const timeItem = document.createElement("li");
     const timeLink = document.createElement("a");
     timeLink.classList.add("timing");
     timeLink.href = "#";
@@ -96,18 +101,16 @@ function displaySlots(data) {
       timeLink.style.pointerEvents = "none";
     } else {
       timeLink.addEventListener("click", () => {
-        const dateStr = selectedDate;
-        const timeStr = time.slot;
+        selectedTime = time.slot;
 
         const newSearchParams = new URLSearchParams(window.location.search);
-        newSearchParams.set("date", dateStr);
-        newSearchParams.set("time", timeStr);
-
+        newSearchParams.set("date", selectedDate);
+        newSearchParams.set("time", time.slot);
         window.location.search = newSearchParams.toString();
       });
     }
 
-    if (selectedDate === selectedDate && time.slot === selectedTime) {
+    if (time.slot === selectedTime) {
       timeLink.classList.add("active");
     }
 
