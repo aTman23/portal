@@ -1,20 +1,14 @@
-
 const startDate = new Date();
 const daySlotsContainer = document.getElementById("day-slots");
-const timeSlotsContainer = document.getElementById("time-slots");
+const timeIntervals = [];
 
-let selectedDate = ""; // Will be set on default load
-let selectedTime = "";
-let slot_data = {};
-
-// Fetch available slots from API
+var slot_data = {};
 function fetchSlots(userId) {
   if (userId) {
     fetch(`${API}/timeslots/week?userId=${userId}`)
       .then((response) => response.json())
       .then((data) => {
-        slot_data = data.slots;
-        displaySlots(slot_data);
+        displaySlots(data.slots);
       })
       .catch((error) => {
         console.error("Error fetching slots:", error);
@@ -22,8 +16,11 @@ function fetchSlots(userId) {
   }
 }
 
-// Show next 7 days and attach click listeners
+if (DoctorId) {
+  fetchSlots(DoctorId);
+}
 const dayDates = [];
+
 for (let i = 0; i < 7; i++) {
   const currentDay = new Date(startDate);
   currentDay.setDate(startDate.getDate() + i);
@@ -39,42 +36,34 @@ for (let i = 0; i < 7; i++) {
     <span>${currentDay.toLocaleString("en-US", { weekday: "long" })}</span>
     <span class="slot-date">
       ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", {
-        month: "short",
-      })}
+    month: "short",
+  })}
       <small class="slot-year">${currentDay.getFullYear()}</small>
     </span>
   `;
 
-  // Set first day as selected by default
-  if (i === 0) {
-    selectedDate = formattedDate;
+  if (formattedDate === selectedDate) {
     daySlot.classList.add("active");
   }
-
-  // Add click event to select date and load time slots
-  daySlot.addEventListener("click", () => {
-    selectedDate = formattedDate;
-    selectedTime = ""; // Reset selected time
-
-    document.querySelectorAll("#day-slots li").forEach((el) =>
-      el.classList.remove("active")
-    );
-    daySlot.classList.add("active");
-
-    displaySlots(slot_data);
-  });
 
   daySlotsContainer.appendChild(daySlot);
 }
 
-// Display time slots for the selected date
+const timeSlotsContainer = document.getElementById("time-slots");
+const daysOfWeek = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
 function displaySlots(data) {
-  const displayedSlots = new Set();
-  timeSlotsContainer.innerHTML = "";
+  const displayedSlots = new Set(); // To track shown slots
+  timeSlotsContainer.innerHTML = ""; // Clear previous slots
 
-  const selectedDay = new Date(selectedDate).toLocaleString("en-US", {
-    weekday: "long",
-  });
+  const selectedDay = new Date(selectedDate).toLocaleString("en-US", { weekday: "long" });
   const selectedDaySlots = data[selectedDay];
 
   if (!selectedDaySlots || selectedDaySlots.length === 0) {
@@ -87,10 +76,11 @@ function displaySlots(data) {
   selectedDaySlots.forEach((time) => {
     const slotLabel = time.slot;
 
+    // Skip duplicates
     if (displayedSlots.has(slotLabel)) return;
     displayedSlots.add(slotLabel);
 
-    const timeItem = document.createElement("li");
+    const timeItem = document.createElement("li"); // Create new <li>
     const timeLink = document.createElement("a");
     timeLink.classList.add("timing");
     timeLink.href = "#";
@@ -98,7 +88,7 @@ function displaySlots(data) {
 
     const [hour, minute] = slotLabel.substring(0, 5).split(":");
     const slotTime = new Date(selectedDate);
-    slotTime.setHours(hour, minute, 0, 0);
+    slotTime.setHours(hour, minute);
 
     if (slotTime < new Date()) {
       timeLink.classList.add("disabled");
@@ -106,23 +96,18 @@ function displaySlots(data) {
       timeLink.style.pointerEvents = "none";
     } else {
       timeLink.addEventListener("click", () => {
-        selectedTime = time.slot;
+        const dateStr = selectedDate;
+        const timeStr = time.slot;
 
-        // Highlight selected time
-        document.querySelectorAll("#time-slots a").forEach((el) =>
-          el.classList.remove("active")
-        );
-        timeLink.classList.add("active");
-
-        // Update URL
         const newSearchParams = new URLSearchParams(window.location.search);
-        newSearchParams.set("date", selectedDate);
-        newSearchParams.set("time", selectedTime);
+        newSearchParams.set("date", dateStr);
+        newSearchParams.set("time", timeStr);
+
         window.location.search = newSearchParams.toString();
       });
     }
 
-    if (time.slot === selectedTime) {
+    if (selectedDate === selectedDate && time.slot === selectedTime) {
       timeLink.classList.add("active");
     }
 
