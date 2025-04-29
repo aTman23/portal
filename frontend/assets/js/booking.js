@@ -77,6 +77,18 @@ const daysOfWeek = [
   "Sunday",
 ];
 
+function formatTimeSlot(startTime, endTime) {
+  const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  
+  const startFormatted = start.toLocaleString('en-US', options);
+  const endFormatted = end.toLocaleString('en-US', options);
+  
+  return `${startFormatted} - ${endFormatted}`;
+}
+
 function displaySlots(data) {
   for (let j = 0; j < 7; j++) {
     const currentDate = dayDates[j];
@@ -90,16 +102,24 @@ function displaySlots(data) {
       timeLink.classList.add("timing");
       timeLink.href = "#";
 
-      const [hour, minute] = time.slot.substring(0, 5).split(":");
-      const slotTime = new Date(dayDates[j]);
-      slotTime.setHours(hour, minute);
+      const [startHour, startMinute] = time.slot.split(" - ")[0].split(":");
+      const [endHour, endMinute] = time.slot.split(" - ")[1].split(":");
 
-      const formattedSlotDate = `${slotTime.getFullYear()}-${String(
-        slotTime.getMonth() + 1
-      ).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
+      const startTime = new Date(dayDates[j]);
+      startTime.setHours(parseInt(startHour), parseInt(startMinute));
+
+      const endTime = new Date(dayDates[j]);
+      endTime.setHours(parseInt(endHour), parseInt(endMinute));
+
+      const formattedSlotDate = `${startTime.getFullYear()}-${String(
+        startTime.getMonth() + 1
+      ).padStart(2, "0")}-${String(startTime.getDate()).padStart(2, "0")}`;
+
+      // Format the slot time like "07:00 pm - 08:00 pm"
+      const formattedSlot = formatTimeSlot(startTime, endTime);
 
       // Disable past slots
-      if (slotTime < new Date()) {
+      if (endTime < new Date()) {
         timeLink.classList.add("disabled");
         timeLink.setAttribute("aria-disabled", "true");
         timeLink.style.pointerEvents = "none";
@@ -127,7 +147,7 @@ function displaySlots(data) {
         timeLink.classList.add("active");
       }
 
-      timeLink.innerHTML = `<span>${time.slot}</span>`;
+      timeLink.innerHTML = `<span>${formattedSlot}</span>`;
       timeSlotList.appendChild(timeLink);
     });
 
