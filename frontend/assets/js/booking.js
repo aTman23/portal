@@ -89,6 +89,40 @@ function formatTimeSlot(startTime, endTime) {
   return `${startFormatted} - ${endFormatted}`;
 }
 
+function removeDuplicates(slots) {
+  const uniqueSlots = [];
+  const seen = new Set();
+
+  slots.forEach(slot => {
+    if (!seen.has(slot)) {
+      seen.add(slot);
+      uniqueSlots.push(slot);
+    }
+  });
+
+  return uniqueSlots;
+}
+
+function sortSlots(slots) {
+  const amSlots = [];
+  const pmSlots = [];
+  
+  slots.forEach(slot => {
+    const [startTime, endTime] = slot.split(" - ");
+    const startHour = parseInt(startTime.split(":")[0]);
+    const isPM = startHour >= 12;
+    
+    if (isPM) {
+      pmSlots.push(slot);
+    } else {
+      amSlots.push(slot);
+    }
+  });
+
+  // Sort AM and PM slots while keeping their order
+  return amSlots.concat(pmSlots);
+}
+
 function displaySlots(data) {
   for (let j = 0; j < 7; j++) {
     const currentDate = dayDates[j];
@@ -97,26 +131,29 @@ function displaySlots(data) {
     });
     const timeSlotList = document.createElement("li");
 
-    data[week]?.forEach((time) => {
+    // Get the slots for the current day, remove duplicates, and sort
+    const daySlots = data[week] || [];
+    const uniqueSlots = removeDuplicates(daySlots);
+    const sortedSlots = sortSlots(uniqueSlots);
+
+    sortedSlots.forEach((slot) => {
       const timeLink = document.createElement("a");
       timeLink.classList.add("timing");
       timeLink.href = "#";
 
-      const [startHour, startMinute] = time.slot.split(" - ")[0].split(":");
-      const [endHour, endMinute] = time.slot.split(" - ")[1].split(":");
-
+      // Format the slot time as "07:00 AM - 08:00 AM"
+      const [startSlot, endSlot] = slot.split(" - ");
       const startTime = new Date(dayDates[j]);
+      const [startHour, startMinute] = startSlot.split(":");
       startTime.setHours(parseInt(startHour), parseInt(startMinute));
 
       const endTime = new Date(dayDates[j]);
+      const [endHour, endMinute] = endSlot.split(":");
       endTime.setHours(parseInt(endHour), parseInt(endMinute));
 
       const formattedSlotDate = `${startTime.getFullYear()}-${String(
         startTime.getMonth() + 1
       ).padStart(2, "0")}-${String(startTime.getDate()).padStart(2, "0")}`;
-
-      // Format the slot time like "07:00 pm - 08:00 pm"
-      const formattedSlot = formatTimeSlot(startTime, endTime);
 
       // Disable past slots
       if (endTime < new Date()) {
@@ -126,7 +163,7 @@ function displaySlots(data) {
       } else {
         // Add event listener to select a time slot
         timeLink.addEventListener("click", () => {
-          const selectedTime = time.slot;
+          const selectedTime = slot;
 
           // Deselect all time slots
           const allTimeSlots = timeSlotsContainer.querySelectorAll("a");
@@ -142,17 +179,12 @@ function displaySlots(data) {
         });
       }
 
-      // Check if the time slot matches the selected time
-      if (formattedSlotDate === selectedDate && time.slot === selectedTime) {
-        timeLink.classList.add("active");
-      }
-
-      timeLink.innerHTML = `<span>${formattedSlot}</span>`;
+      timeLink.innerHTML = `<span>${slot}</span>`;
       timeSlotList.appendChild(timeLink);
     });
 
     // If no slots are available for the day
-    if (data[week] === undefined || data[week]?.length === 0) {
+    if (sortedSlots.length === 0) {
       timeSlotList.innerHTML = `<a class="timing"><span >No slots available</span></a>`;
     }
 
