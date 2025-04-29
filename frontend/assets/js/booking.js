@@ -1,17 +1,8 @@
 const startDate = new Date();
 const daySlotsContainer = document.getElementById("day-slots");
-const timeSlotsContainer = document.getElementById("time-slots");
-const dayDates = [];
+const timeIntervals = [];
 
-const daysOfWeek = [
-  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-];
-
-// Get selected date and time from URL
-const urlParams = new URLSearchParams(window.location.search);
-const selectedDate = urlParams.get("date");
-const selectedTime = urlParams.get("time");
-
+var slot_data = {};
 function fetchSlots(userId) {
   if (userId) {
     fetch(`${API}/timeslots/week?userId=${userId}`)
@@ -28,32 +19,28 @@ function fetchSlots(userId) {
 if (DoctorId) {
   fetchSlots(DoctorId);
 }
+const dayDates = [];
 
-// Generate and render 7 days from today
 for (let i = 0; i < 7; i++) {
   const currentDay = new Date(startDate);
   currentDay.setDate(startDate.getDate() + i);
   dayDates.push(currentDay);
 
-  const formattedDate = `${currentDay.getFullYear()}-${String(currentDay.getMonth() + 1).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
-
   const daySlot = document.createElement("li");
+
+  const formattedDate = `${currentDay.getFullYear()}-${String(
+    currentDay.getMonth() + 1
+  ).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
+
   daySlot.innerHTML = `
     <span>${currentDay.toLocaleString("en-US", { weekday: "long" })}</span>
     <span class="slot-date">
-      ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", { month: "short" })}
+      ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", {
+    month: "short",
+  })}
       <small class="slot-year">${currentDay.getFullYear()}</small>
     </span>
   `;
-
-  daySlot.addEventListener("click", () => {
-    document.querySelectorAll("#day-slots li").forEach(slot => slot.classList.remove("active"));
-    daySlot.classList.add("active");
-
-    const newParams = new URLSearchParams(window.location.search);
-    newParams.set("date", formattedDate);
-    window.location.search = newParams.toString();
-  });
 
   if (formattedDate === selectedDate) {
     daySlot.classList.add("active");
@@ -62,83 +49,67 @@ for (let i = 0; i < 7; i++) {
   daySlotsContainer.appendChild(daySlot);
 }
 
-// Utilities
-function removeDuplicates(slots) {
-  const seen = new Set();
-  return slots.filter(slot => {
-    if (seen.has(slot)) return false;
-    seen.add(slot);
-    return true;
-  });
-}
-
-function sortSlots(slots) {
-  return slots.sort((a, b) => {
-    const [aStart] = a.split(" - ");
-    const [bStart] = b.split(" - ");
-    const [aH, aM] = aStart.split(":").map(Number);
-    const [bH, bM] = bStart.split(":").map(Number);
-    return aH * 60 + aM - (bH * 60 + bM);
-  });
-}
+const timeSlotsContainer = document.getElementById("time-slots");
+const daysOfWeek = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
 
 function displaySlots(data) {
-  timeSlotsContainer.innerHTML = "";
+  for (let j = 0; j < 7; j++) {
+    const currentDate = dayDates[j];
+    const week = currentDate.toLocaleString("en-US", {
+      weekday: "long",
+    });
+    const timeSlotList = document.createElement("li");
 
-  const selected = dayDates.find(date => {
-    const d = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    return d === selectedDate;
-  });
+    data[week]?.forEach((time) => {
+      const timeLink = document.createElement("a");
+      timeLink.classList.add("timing");
+      timeLink.href = "#";
 
-  if (!selected) return;
+      const [hour, minute] = time.slot.substring(0, 5).split(":");
+      const slotTime = new Date(dayDates[j]);
+      slotTime.setHours(hour, minute);
 
-  const weekday = selected.toLocaleString("en-US", { weekday: "long" });
-  const slots = removeDuplicates(data[weekday] || []);
-  const sortedSlots = sortSlots(slots);
+      const formattedSlotDate = `${slotTime.getFullYear()}-${String(
+        slotTime.getMonth() + 1
+      ).padStart(2, "0")}-${String(slotTime.getDate()).padStart(2, "0")}`;
 
-  if (sortedSlots.length === 0) {
-    const noSlotItem = document.createElement("li");
-    noSlotItem.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
-    timeSlotsContainer.appendChild(noSlotItem);
-    return;
-  }
+      if (slotTime < new Date()) {
+        timeLink.classList.add("disabled");
+        timeLink.setAttribute("aria-disabled", "true");
+        timeLink.style.pointerEvents = "none";
+      } else {
+        timeLink.addEventListener("click", () => {
+          const dateStr = formattedSlotDate;
+          const timeStr = time.slot;
 
-  sortedSlots.forEach(slot => {
-    const [start, end] = slot.split(" - ");
-    const startTime = new Date(selected);
-    const [sh, sm] = start.split(":").map(Number);
-    startTime.setHours(sh, sm);
+          const newSearchParams = new URLSearchParams(window.location.search);
+          newSearchParams.set("date", dateStr);
+          newSearchParams.set("time", timeStr);
 
-    const endTime = new Date(selected);
-    const [eh, em] = end.split(":").map(Number);
-    endTime.setHours(eh, em);
+          window.location.search = newSearchParams.toString();
+        });
+      }
 
-    const timeLink = document.createElement("a");
-    timeLink.className = "timing";
-    timeLink.href = "#";
-
-    if (endTime < new Date()) {
-      timeLink.classList.add("disabled");
-      timeLink.setAttribute("aria-disabled", "true");
-      timeLink.style.pointerEvents = "none";
-    } else {
-      timeLink.addEventListener("click", () => {
-        document.querySelectorAll("#time-slots a").forEach(el => el.classList.remove("active"));
+      if (formattedSlotDate === selectedDate && time.slot === selectedTime) {
         timeLink.classList.add("active");
+      }
 
-        const newParams = new URLSearchParams(window.location.search);
-        newParams.set("time", slot);
-        window.location.search = newParams.toString();
-      });
+      timeLink.innerHTML = `<span>${time.slot}</span>`;
+      timeSlotList.appendChild(timeLink);
+    });
+    if (data[week] === undefined || data[week]?.length === 0) {
+      timeSlotList.innerHTML = `<a class="timing"><span >No slots available</span></a>`;
+
     }
 
-    if (slot === selectedTime) {
-      timeLink.classList.add("active");
-    }
-
-    timeLink.innerHTML = `<span>${slot}</span>`;
-    const li = document.createElement("li");
-    li.appendChild(timeLink);
-    timeSlotsContainer.appendChild(li);
-  });
+    timeSlotsContainer.appendChild(timeSlotList);
+  }
 }
