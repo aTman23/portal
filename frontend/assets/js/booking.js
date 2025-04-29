@@ -124,24 +124,34 @@ function sortSlots(slots) {
 }
 
 function displaySlots(data) {
+  // Clear existing slots
+  timeSlotsContainer.innerHTML = "";
+
   for (let j = 0; j < 7; j++) {
     const currentDate = dayDates[j];
     const week = currentDate.toLocaleString("en-US", {
       weekday: "long",
     });
-    const timeSlotList = document.createElement("li");
 
-    // Get the slots for the current day, remove duplicates, and sort
     const daySlots = data[week] || [];
     const uniqueSlots = removeDuplicates(daySlots);
     const sortedSlots = sortSlots(uniqueSlots);
+
+    if (sortedSlots.length === 0) {
+      const noSlotItem = document.createElement("li");
+      const noSlotLink = document.createElement("a");
+      noSlotLink.className = "timing";
+      noSlotLink.innerHTML = `<span>No slots available</span>`;
+      noSlotItem.appendChild(noSlotLink);
+      timeSlotsContainer.appendChild(noSlotItem);
+      continue;
+    }
 
     sortedSlots.forEach((slot) => {
       const timeLink = document.createElement("a");
       timeLink.classList.add("timing");
       timeLink.href = "#";
 
-      // Format the slot time as "07:00 AM - 08:00 AM"
       const [startSlot, endSlot] = slot.split(" - ");
       const startTime = new Date(dayDates[j]);
       const [startHour, startMinute] = startSlot.split(":");
@@ -151,28 +161,19 @@ function displaySlots(data) {
       const [endHour, endMinute] = endSlot.split(":");
       endTime.setHours(parseInt(endHour), parseInt(endMinute));
 
-      const formattedSlotDate = `${startTime.getFullYear()}-${String(
-        startTime.getMonth() + 1
-      ).padStart(2, "0")}-${String(startTime.getDate()).padStart(2, "0")}`;
-
-      // Disable past slots
       if (endTime < new Date()) {
         timeLink.classList.add("disabled");
         timeLink.setAttribute("aria-disabled", "true");
         timeLink.style.pointerEvents = "none";
       } else {
-        // Add event listener to select a time slot
         timeLink.addEventListener("click", () => {
           const selectedTime = slot;
 
-          // Deselect all time slots
           const allTimeSlots = timeSlotsContainer.querySelectorAll("a");
           allTimeSlots.forEach((slot) => slot.classList.remove("active"));
 
-          // Mark the selected time slot as active
           timeLink.classList.add("active");
 
-          // Set the selected time in the URL
           const newSearchParams = new URLSearchParams(window.location.search);
           newSearchParams.set("time", selectedTime);
           window.location.search = newSearchParams.toString();
@@ -180,14 +181,10 @@ function displaySlots(data) {
       }
 
       timeLink.innerHTML = `<span>${slot}</span>`;
-      timeSlotList.appendChild(timeLink);
+      const slotItem = document.createElement("li");
+      slotItem.appendChild(timeLink);
+      timeSlotsContainer.appendChild(slotItem);
     });
-
-    // If no slots are available for the day
-    if (sortedSlots.length === 0) {
-      timeSlotList.innerHTML = `<a class="timing"><span >No slots available</span></a>`;
-    }
-
-    timeSlotsContainer.appendChild(timeSlotList);
   }
 }
+
