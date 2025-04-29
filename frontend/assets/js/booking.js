@@ -1,117 +1,121 @@
 const startDate = new Date();
-const daySlotsContainer = document.getElementById("day-slots");
-const timeIntervals = [];
+  const daySlotsContainer = document.getElementById("day-slots");
+  const timeSlotsContainer = document.getElementById("time-slots");
 
-var slot_data = {};
-function fetchSlots(userId) {
-  if (userId) {
-    fetch(`${API}/timeslots/week?userId=${userId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        displaySlots(data.slots);
-      })
-      .catch((error) => {
-        console.error("Error fetching slots:", error);
+  let selectedDate = "";
+  let selectedTime = "";
+  let slot_data = {}; // will be filled after API call
+
+  // Fetch all week's slots once and store
+  function fetchSlots(userId) {
+    if (userId) {
+      fetch(`${API}/timeslots/week?userId=${userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          slot_data = data.slots;
+          generateDaySlots(); // Generate day UI only after slots are ready
+        })
+        .catch((error) => {
+          console.error("Error fetching slots:", error);
+        });
+    }
+  }
+
+  // Generate next 7 days and attach click event for each
+  function generateDaySlots() {
+    daySlotsContainer.innerHTML = ""; // clear previous
+    const dayDates = [];
+
+    for (let i = 0; i < 7; i++) {
+      const currentDay = new Date(startDate);
+      currentDay.setDate(startDate.getDate() + i);
+      const formattedDate = `${currentDay.getFullYear()}-${String(currentDay.getMonth() + 1).padStart(2, '0')}-${String(currentDay.getDate()).padStart(2, '0')}`;
+      const dayLabel = currentDay.toLocaleString("en-US", { weekday: "long" });
+
+      dayDates.push({ date: formattedDate, label: dayLabel });
+
+      const daySlot = document.createElement("li");
+      daySlot.innerHTML = `
+        <span>${dayLabel}</span>
+        <span class="slot-date">
+          ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", { month: "short" })}
+          <small class="slot-year">${currentDay.getFullYear()}</small>
+        </span>
+      `;
+
+      // Click to update selectedDate and display slots
+      daySlot.addEventListener("click", () => {
+        selectedDate = formattedDate;
+
+        // remove "active" from all
+        document.querySelectorAll("#day-slots li").forEach(el => el.classList.remove("active"));
+        daySlot.classList.add("active");
+
+        displaySlotsForDay(dayLabel);
       });
-  }
-}
 
-if (DoctorId) {
-  fetchSlots(DoctorId);
-}
-const dayDates = [];
-
-for (let i = 0; i < 7; i++) {
-  const currentDay = new Date(startDate);
-  currentDay.setDate(startDate.getDate() + i);
-  dayDates.push(currentDay);
-
-  const daySlot = document.createElement("li");
-
-  const formattedDate = `${currentDay.getFullYear()}-${String(
-    currentDay.getMonth() + 1
-  ).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
-
-  daySlot.innerHTML = `
-    <span>${currentDay.toLocaleString("en-US", { weekday: "long" })}</span>
-    <span class="slot-date">
-      ${currentDay.getDate()} ${currentDay.toLocaleString("en-US", {
-    month: "short",
-  })}
-      <small class="slot-year">${currentDay.getFullYear()}</small>
-    </span>
-  `;
-
-  if (formattedDate === selectedDate) {
-    daySlot.classList.add("active");
-  }
-
-  daySlotsContainer.appendChild(daySlot);
-}
-
-const timeSlotsContainer = document.getElementById("time-slots");
-const daysOfWeek = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-function displaySlots(data) {
-  const displayedSlots = new Set(); // To track shown slots
-  timeSlotsContainer.innerHTML = ""; // Clear previous slots
-
-  const selectedDay = new Date(selectedDate).toLocaleString("en-US", { weekday: "long" });
-  const selectedDaySlots = data[selectedDay];
-
-  if (!selectedDaySlots || selectedDaySlots.length === 0) {
-    const noSlotItem = document.createElement("li");
-    noSlotItem.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
-    timeSlotsContainer.appendChild(noSlotItem);
-    return;
-  }
-
-  selectedDaySlots.forEach((time) => {
-    const slotLabel = time.slot;
-
-    // Skip duplicates
-    if (displayedSlots.has(slotLabel)) return;
-    displayedSlots.add(slotLabel);
-
-    const timeItem = document.createElement("li"); // Create new <li>
-    const timeLink = document.createElement("a");
-    timeLink.classList.add("timing");
-    timeLink.href = "#";
-    timeLink.innerHTML = `<span>${slotLabel}</span>`;
-
-    const [hour, minute] = slotLabel.substring(0, 5).split(":");
-    const slotTime = new Date(selectedDate);
-    slotTime.setHours(hour, minute);
-
-    if (slotTime < new Date()) {
-      timeLink.classList.add("disabled");
-      timeLink.setAttribute("aria-disabled", "true");
-      timeLink.style.pointerEvents = "none";
-    } else {
-      timeLink.addEventListener("click", () => {
-        const dateStr = selectedDate;
-        const timeStr = time.slot;
-
-        const newSearchParams = new URLSearchParams(window.location.search);
-        newSearchParams.set("date", dateStr);
-        newSearchParams.set("time", timeStr);
-
-        window.location.search = newSearchParams.toString();
-      });
+      daySlotsContainer.appendChild(daySlot);
     }
 
-    if (selectedDate === selectedDate && time.slot === selectedTime) {
-      timeLink.classList.add("active");
+    // Auto-select today initially
+    const today = dayDates[0];
+    selectedDate = today.date;
+    document.querySelector("#day-slots li").classList.add("active");
+    displaySlotsForDay(today.label);
+  }
+
+  // Display time slots only for selected day
+  function displaySlotsForDay(weekday) {
+    const displayedSlots = new Set();
+    timeSlotsContainer.innerHTML = "";
+
+    const slots = slot_data[weekday];
+
+    if (!slots || slots.length === 0) {
+      const noSlot = document.createElement("li");
+      noSlot.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
+      timeSlotsContainer.appendChild(noSlot);
+      return;
     }
 
-    timeItem.appendChild(timeLink);
-    timeSlotsContainer.appendChild(timeItem);
-  });
-}
+    for (const timeObj of slots) {
+      const slot = timeObj.slot;
+
+      // Avoid duplicates
+      if (displayedSlots.has(slot)) continue;
+      displayedSlots.add(slot);
+
+      const timeItem = document.createElement("li");
+      const timeLink = document.createElement("a");
+      timeLink.classList.add("timing");
+      timeLink.href = "#";
+      timeLink.innerHTML = `<span>${slot}</span>`;
+
+      // Check if slot is in the past
+      const [fromHour, fromMinute] = slot.substring(0, 5).split(":");
+      const slotTime = new Date(selectedDate);
+      slotTime.setHours(fromHour, fromMinute, 0, 0);
+
+      if (slotTime < new Date()) {
+        timeLink.classList.add("disabled");
+        timeLink.setAttribute("aria-disabled", "true");
+        timeLink.style.pointerEvents = "none";
+      } else {
+        timeLink.addEventListener("click", () => {
+          selectedTime = slot;
+
+          const newParams = new URLSearchParams(window.location.search);
+          newParams.set("date", selectedDate);
+          newParams.set("time", slot);
+          window.location.search = newParams.toString();
+        });
+      }
+
+      if (selectedTime === slot) {
+        timeLink.classList.add("active");
+      }
+
+      timeItem.appendChild(timeLink);
+      timeSlotsContainer.appendChild(timeItem);
+    }
+  }
