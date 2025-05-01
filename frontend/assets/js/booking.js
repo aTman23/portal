@@ -3,11 +3,7 @@ const daySlotsContainer = document.getElementById("day-slots");
 const timeSlotsContainer = document.getElementById("time-slots");
 const bookAptBtn = document.getElementById("bookApt");
 
-// let selectedDate = new URLSearchParams(window.location.search).get("date");
-// let selectedTime = new URLSearchParams(window.location.search).get("time");
 
-// const API = "https://portalserver-sepia.vercel.app";
-// const DoctorId = new URLSearchParams(window.location.search).get("doctorId");
 
 function fetchSlots(userId) {
   if (userId) {
