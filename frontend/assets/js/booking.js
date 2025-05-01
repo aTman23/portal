@@ -1,17 +1,17 @@
 const startDate = new Date();
 const daySlotsContainer = document.getElementById("day-slots");
-const timeSlotsContainer = document.getElementById("time-slots");
-let selectedDate = ""; // Will be set on day click
-let selectedTime = ""; // Optional: used to highlight selected time
-let slot_data = {}; // Will hold all 7 days of slot data
+const timeIntervals = [];
 
-// Fetch weekly slots for doctor and store globally
+var slot_data = {};
+
 function fetchSlots(userId) {
+  console.log("Fetching slots for userId:", userId);
   if (userId) {
     fetch(`${API}/timeslots/week?userId=${userId}`)
       .then((response) => response.json())
       .then((data) => {
-        slot_data = data.slots; // Save for later use
+        console.log("Fetched slot data:", data);
+        displaySlots(data.slots);
       })
       .catch((error) => {
         console.error("Error fetching slots:", error);
@@ -20,10 +20,12 @@ function fetchSlots(userId) {
 }
 
 if (DoctorId) {
+  console.log("DoctorId available:", DoctorId);
   fetchSlots(DoctorId);
+} else {
+  console.log("No DoctorId found");
 }
 
-// Generate 7-day clickable list
 const dayDates = [];
 
 for (let i = 0; i < 7; i++) {
@@ -37,6 +39,8 @@ for (let i = 0; i < 7; i++) {
     currentDay.getMonth() + 1
   ).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
 
+  console.log("Creating day slot for date:", formattedDate);
+
   daySlot.innerHTML = `
     <span>${currentDay.toLocaleString("en-US", { weekday: "long" })}</span>
     <span class="slot-date">
@@ -47,33 +51,38 @@ for (let i = 0; i < 7; i++) {
     </span>
   `;
 
-  // Add click event for day selection
-  daySlot.addEventListener("click", () => {
-    // Clear active class from all
-    document.querySelectorAll("#day-slots li").forEach((li) => {
-      li.classList.remove("active");
-    });
+  if (formattedDate === selectedDate) {
+    console.log("Marking as active date:", formattedDate);
     daySlot.classList.add("active");
-
-    // Update selected date
-    selectedDate = formattedDate;
-
-    // Clear and show slots for selected day
-    displaySlots(slot_data);
-  });
+  }
 
   daySlotsContainer.appendChild(daySlot);
 }
 
-// Main slot rendering function
+const timeSlotsContainer = document.getElementById("time-slots");
+const daysOfWeek = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
 function displaySlots(data) {
+  console.log("Displaying slots with data:", data);
   const displayedSlots = new Set();
-  timeSlotsContainer.innerHTML = ""; // Clear old
+  timeSlotsContainer.innerHTML = "";
 
   const selectedDay = new Date(selectedDate).toLocaleString("en-US", { weekday: "long" });
   const selectedDaySlots = data[selectedDay];
 
+  console.log("Selected day:", selectedDay);
+  console.log("Slots for selected day:", selectedDaySlots);
+
   if (!selectedDaySlots || selectedDaySlots.length === 0) {
+    console.warn("No slots available for this day.");
     const noSlotItem = document.createElement("li");
     noSlotItem.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
     timeSlotsContainer.appendChild(noSlotItem);
@@ -82,7 +91,12 @@ function displaySlots(data) {
 
   selectedDaySlots.forEach((time) => {
     const slotLabel = time.slot;
-    if (displayedSlots.has(slotLabel)) return;
+    console.log("Processing slot:", slotLabel);
+
+    if (displayedSlots.has(slotLabel)) {
+      console.log("Duplicate slot skipped:", slotLabel);
+      return;
+    }
     displayedSlots.add(slotLabel);
 
     const timeItem = document.createElement("li");
@@ -96,21 +110,27 @@ function displaySlots(data) {
     slotTime.setHours(hour, minute);
 
     if (slotTime < new Date()) {
+      console.log("Slot is in the past, disabling:", slotLabel);
       timeLink.classList.add("disabled");
       timeLink.setAttribute("aria-disabled", "true");
       timeLink.style.pointerEvents = "none";
     } else {
       timeLink.addEventListener("click", () => {
-        selectedTime = time.slot;
+        const dateStr = selectedDate;
+        const timeStr = time.slot;
+
+        console.log("Slot clicked:", { date: dateStr, time: timeStr });
 
         const newSearchParams = new URLSearchParams(window.location.search);
-        newSearchParams.set("date", selectedDate);
-        newSearchParams.set("time", time.slot);
+        newSearchParams.set("date", dateStr);
+        newSearchParams.set("time", timeStr);
+
         window.location.search = newSearchParams.toString();
       });
     }
 
-    if (time.slot === selectedTime) {
+    if (selectedDate === selectedDate && time.slot === selectedTime) {
+      console.log("Marking slot as active:", slotLabel);
       timeLink.classList.add("active");
     }
 
