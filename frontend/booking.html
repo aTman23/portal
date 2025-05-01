@@ -52,15 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const bookAptBtn = document.getElementById("bookApt");
 
+  
   if (!selectedDate || !selectedTime) {
-    // Disable the button if date or time is missing
-    bookAptBtn.href = "#";
-    bookAptBtn.classList.add("disabled");
-  } else {
-    // Set the appointment link with query parameters when both date and time are available
-    bookAptBtn.href = `${bookAptBtn.href.split("?")[0]}${window.location.search}`;
-    bookAptBtn.classList.remove("disabled");
-  }
+        document.getElementById("bookApt").href = "#";
+      } else {
+        document.getElementById("bookApt").href += window.location.search;
+      }
+
 
   // Check if there's a profile image in session storage and set it
   const storedImageUrl = sessionStorage.getItem("profileImage");
