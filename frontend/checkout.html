@@ -23,7 +23,8 @@
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css" />
 
     <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <!-- <link rel="stylesheet" href="assets/css/style.css" /> -->
+    <link rel="stylesheet" href="assets/css/checkout.css" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -40,21 +41,19 @@
       const selectedTime = convertTo24Hour(urlParams.get("time").substring(0,8));
    
       const Loc = urlParams.get("Loc");
+
       function convertTo24Hour(time) {
-    let [hours, minutes] = time.match(/\d+/g); 
-    let isPM = time.toLowerCase().includes("pm");
-    let isAM = time.toLowerCase().includes("am");
 
-    hours = parseInt(hours, 10);
+        var hours = parseInt(time.substr(0, 2));
+        if (time.indexOf("am") != -1 && hours == 12) {
+          time = time.replace("12", "0");
+        }
+        if (time.indexOf("pm") != -1 && hours < 12) {
+          time = time.replace(hours, hours + 12);
+        }
+        return time.replace(/( am| pm)/, "");
+      }
 
-    if (isAM && hours === 12) {
-        hours = 0; 
-    } else if (isPM && hours < 12) {
-        hours += 12; 
-    }
-
-    return `${String(hours).padStart(2, "0")}:${minutes}`; // Ensure two-digit format
-}
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("name").textContent = DocName;
         document.getElementById("loc").textContent = Loc;
@@ -196,67 +195,37 @@
     <!-- Main Wrapper -->
     <div class="main-wrapper">
       <!-- Header -->
-      <header class="header">
-        <nav class="navbar navbar-expand-lg header-nav">
-          <div class="navbar-header">
-            <a id="mobile_btn" href="javascript:void(0);">
-              <span class="bar-icon">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
+      
+        <nav class="navbar">
+          <div class="logo">
+            <a href="https://psyshell.co" target="_blank" rel="noopener noreferrer" class="logo-link">
+              <img src="./assets/img/ATMAN-removebg-preview.png" alt="Logo" class="logo" />
             </a>
-            <a href="#" class="navbar-brand logo">
-              <img src="assets/img/logo.png" class="img-fluid" alt="Logo" />
-            </a>
-          </div>
-
-          <div class="main-menu-wrapper">
-            <div class="menu-header">
-              <a href="#" class="menu-logo">
-                <img src="assets/img/logo.png" class="img-fluid" alt="Logo" />
-              </a>
-              <a id="menu_close" class="menu-close" href="javascript:void(0);">
-                <i class="fas fa-times"></i>
-              </a>
-            </div>
-          </div>
-
-          <li class="nav-item contact-info">
-            <div class="contact-details">
-              <a href="mailto:contact@psyshell.help" class="contact-email">
-                <i class="fas fa-envelope"></i> contact@psyshell.help
-              </a>
-              <div class="contact-phone">
-                <i class="fas fa-phone-alt"></i> +91 9121422554
-              </div>
-            </div>
-          </li>
+                </div>
+          <nav id="nav-links">
+            <a href="https://psyshell.co/landing" >Home</a>
+            <a href="https://psyshell.co/about" >About</a>
+            <a href="https://psyshell.co/Therapist">Therapist</a>
+            <a href="https://psyshell.co/talksafe">TalkSafe</a>
+          </nav>
+          <div class="menu-toggle" onclick="toggleMenu()">☰</div>
         </nav>
-      </header>
+      
+        <script>
+          function toggleMenu() {
+            document.getElementById("nav-links").classList.toggle("show");
+          }
+        </script>
       <!-- /Header -->
 
-      <!-- Breadcrumb -->
-      <div class="breadcrumb-bar">
-        <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-md-12 col-12">
-              <nav aria-label="breadcrumb" class="page-breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item">
-                    <a href="#">Home</a>
-                  </li>
-                  <li class="breadcrumb-item active" aria-current="page">
-                    Book
-                  </li>
-                </ol>
-              </nav>
-              <h2 class="breadcrumb-title">Booking</h2>
-            </div>
-          </div>
-        </div>
+       <!-- Breadcrumb -->
+       <div class="breadcrumb-bar">
+        <header class="header">
+          <h1><span>Billing</span></h1>
+          
+        </header>
       </div>
-
+      <!-- /Breadcrumb -->
       <!-- /Breadcrumb -->
 
       <!-- Page Content -->
@@ -511,6 +480,14 @@
                         <!-- <li>Booking Fee <span>₹___</span></li>
                         <li>Video Call <span>₹___</span></li> -->
                       </ul>
+                  
+                      <!-- Referral Code Input Box -->
+                      <!-- <div class="referral-code-box" style="margin: 10px 0;">
+                        <label for="referralCode" style="font-weight: 500;">Referral Code</label><br>
+                        <input type="text" id="referralCode" name="referralCode" placeholder="Enter referral code"
+                               style="width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+                      </div> -->
+                  
                       <div class="booking-total">
                         <ul class="booking-total-list">
                           <li>
@@ -521,8 +498,6 @@
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
               <!-- /Booking Summary -->
             </div>
           </div>
@@ -531,101 +506,19 @@
       <!-- /Page Content -->
 
       <!-- Footer -->
-      <footer class="footer">
-        <!-- Footer Top -->
-        <div class="footer-top">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-lg-6 col-md-6">
-                <!-- Footer Widget -->
-                <div class="footer-widget footer-about">
-                  <div class="footer-logo">
-                    <img src="assets/img/footer-logo.png" alt="logo" />
-                  </div>
-                  <div class="footer-about-content">
-                    <p>Streamline Your Practice, Empower Your Well-being.</p>
-                    <div class="social-icon">
-                      <ul>
-                        <li>
-                          <a
-                            href="https://www.linkedin.com/company/psyshell/"
-                            target="_blank"
-                            ><i class="fab fa-linkedin-in"></i
-                          ></a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://www.instagram.com/psyshell/"
-                            target="_blank"
-                            ><i class="fab fa-instagram"></i
-                          ></a>
-                        </li>
-                        <li>
-                          <a
-                            href="https://whatsapp.com/channel/0029VaWTh5p0bIdsWUjjqB36"
-                            target="_blank"
-                            ><i class="fab fa-whatsapp"></i>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <!-- /Footer Widget -->
-              </div>
-
-              <div class="col-lg-6 col-md-6">
-                <!-- Footer Widget -->
-                <div class="footer-widget footer-contact">
-                  <h2 class="footer-title">Contact Us</h2>
-                  <div class="footer-contact-info">
-                    <p class="mb-0">
-                      <i class="fas fa-envelope"></i>
-                      contact@psyshell.help
-                    </p>
-                  </div>
-                </div>
-                <!-- /Footer Widget -->
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /Footer Top -->
-
-        <!-- Footer Bottom -->
-        <div class="footer-bottom">
-          <div class="container-fluid">
-            <!-- Copyright -->
-            <div class="copyright">
-              <div class="row">
-                <div class="col-md-6 col-lg-6">
-                  <div class="copyright-text">
-                    <p class="mb-0">
-                      <a href="#">PsyShell</a>
-                    </p>
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-6">
-                  <!-- Copyright Menu -->
-                  <div class="copyright-menu">
-                    <ul class="policy-menu">
-                      <li>
-                        <a href="term-condition.html">Terms and Conditions</a>
-                      </li>
-                      <li><a href="privacy-policy.html">Policy</a></li>
-                    </ul>
-                  </div>
-                  <!-- /Copyright Menu -->
-                </div>
-              </div>
-            </div>
-            <!-- /Copyright -->
-          </div>
-        </div>
-        <!-- /Footer Bottom -->
+       <!-- Footer -->
+       <footer class="footer">
+ 
+        <div class="footer-links">
+          <div class="footer-links">
+            <button onclick="window.open('https://psyshell.co/404error.html', '_blank')">404</button>
+  
+            <button onclick="window.location.href='https://psyshell.co/guidelines.html'">Guidelines</button>
+  <button onclick="window.location.href='https://psyshell.co/privacy&policy.html'">Privacy Policy</button>
+  <button onclick="window.location.href='https://psyshell.co/termsandconditions.html'">Terms and Conditions</button>
+  
       </footer>
-      <!-- /Footer -->
-    </div>
+      </div>
     <!-- /Main Wrapper -->
 
     <!-- jQuery -->
