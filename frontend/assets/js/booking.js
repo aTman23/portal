@@ -3,11 +3,14 @@ const daySlotsContainer = document.getElementById("day-slots");
 const timeIntervals = [];
 
 var slot_data = {};
+
 function fetchSlots(userId) {
+  console.log("Fetching slots for userId:", userId);
   if (userId) {
     fetch(`${API}/timeslots/week?userId=${userId}`)
       .then((response) => response.json())
       .then((data) => {
+        console.log("Fetched slot data:", data);
         displaySlots(data.slots);
       })
       .catch((error) => {
@@ -17,8 +20,12 @@ function fetchSlots(userId) {
 }
 
 if (DoctorId) {
+  console.log("DoctorId available:", DoctorId);
   fetchSlots(DoctorId);
+} else {
+  console.log("No DoctorId found");
 }
+
 const dayDates = [];
 
 for (let i = 0; i < 7; i++) {
@@ -32,6 +39,8 @@ for (let i = 0; i < 7; i++) {
     currentDay.getMonth() + 1
   ).padStart(2, "0")}-${String(currentDay.getDate()).padStart(2, "0")}`;
 
+  console.log("Creating day slot for date:", formattedDate);
+
   daySlot.innerHTML = `
     <span>${currentDay.toLocaleString("en-US", { weekday: "long" })}</span>
     <span class="slot-date">
@@ -43,6 +52,7 @@ for (let i = 0; i < 7; i++) {
   `;
 
   if (formattedDate === selectedDate) {
+    console.log("Marking as active date:", formattedDate);
     daySlot.classList.add("active");
   }
 
@@ -59,14 +69,20 @@ const daysOfWeek = [
   "Saturday",
   "Sunday",
 ];
+
 function displaySlots(data) {
-  const displayedSlots = new Set(); // To track shown slots
-  timeSlotsContainer.innerHTML = ""; // Clear previous slots
+  console.log("Displaying slots with data:", data);
+  const displayedSlots = new Set();
+  timeSlotsContainer.innerHTML = "";
 
   const selectedDay = new Date(selectedDate).toLocaleString("en-US", { weekday: "long" });
   const selectedDaySlots = data[selectedDay];
 
+  console.log("Selected day:", selectedDay);
+  console.log("Slots for selected day:", selectedDaySlots);
+
   if (!selectedDaySlots || selectedDaySlots.length === 0) {
+    console.warn("No slots available for this day.");
     const noSlotItem = document.createElement("li");
     noSlotItem.innerHTML = `<a class="timing"><span>No slots available</span></a>`;
     timeSlotsContainer.appendChild(noSlotItem);
@@ -75,12 +91,15 @@ function displaySlots(data) {
 
   selectedDaySlots.forEach((time) => {
     const slotLabel = time.slot;
+    console.log("Processing slot:", slotLabel);
 
-    // Skip duplicates
-    if (displayedSlots.has(slotLabel)) return;
+    if (displayedSlots.has(slotLabel)) {
+      console.log("Duplicate slot skipped:", slotLabel);
+      return;
+    }
     displayedSlots.add(slotLabel);
 
-    const timeItem = document.createElement("li"); // Create new <li>
+    const timeItem = document.createElement("li");
     const timeLink = document.createElement("a");
     timeLink.classList.add("timing");
     timeLink.href = "#";
@@ -91,6 +110,7 @@ function displaySlots(data) {
     slotTime.setHours(hour, minute);
 
     if (slotTime < new Date()) {
+      console.log("Slot is in the past, disabling:", slotLabel);
       timeLink.classList.add("disabled");
       timeLink.setAttribute("aria-disabled", "true");
       timeLink.style.pointerEvents = "none";
@@ -98,6 +118,8 @@ function displaySlots(data) {
       timeLink.addEventListener("click", () => {
         const dateStr = selectedDate;
         const timeStr = time.slot;
+
+        console.log("Slot clicked:", { date: dateStr, time: timeStr });
 
         const newSearchParams = new URLSearchParams(window.location.search);
         newSearchParams.set("date", dateStr);
@@ -108,6 +130,7 @@ function displaySlots(data) {
     }
 
     if (selectedDate === selectedDate && time.slot === selectedTime) {
+      console.log("Marking slot as active:", slotLabel);
       timeLink.classList.add("active");
     }
 
